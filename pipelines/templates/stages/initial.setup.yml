@@ -60,7 +60,7 @@ stages:
               -var 'aws_account_number=$(awsAccountNumber)' \
               -var 'gcp_project_id=$(gcpProjectId)' \
               -var 'gcp_secret_json=$(gcpSecretJson)'
-            terraform apply initial_config
+            terraform -chdir=terraform/setup apply initial_config
           displayName: Perform Terraform Operations
           env:
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
