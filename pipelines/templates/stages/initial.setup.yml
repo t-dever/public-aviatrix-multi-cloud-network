@@ -43,12 +43,12 @@ stages:
             addSpnToEnvironment: true
 
         - script: |
-            terraform chdir=terraform/setup init \
+            terraform -chdir=terraform/setup init \
               -backend-config="storage_account_name=$(storageAccountName)" \
               -backend-config="container_name=$(storageContainerName)" \
               -backend-config="subscription_id=$(SUBSCRIPTION_ID)" \
               -backend-config="tenant_id=$(TENANT_ID)"
-            terraform chdir=terraform/setup plan -out=initial_config \
+            terraform -chdir=terraform/setup plan -out=initial_config \
               -var 'user_principal_id=$(userPrincipalId)' \
               -var 'aviatrix_customer_id=$(aviatrixCustomerId)' \
               -var 'azure_subscription_id=$(SUBSCRIPTION_ID)' \
