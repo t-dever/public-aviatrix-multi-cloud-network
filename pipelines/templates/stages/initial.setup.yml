@@ -7,7 +7,7 @@ stages:
     - job: InitialDeploymentJob
       displayName: Initial Deployment
       steps:
-        - template: ../../common.yml
+        - template: ../common.yml
           parameters:
             serviceConnectionName: TRAVIS_CONNECTION
 
