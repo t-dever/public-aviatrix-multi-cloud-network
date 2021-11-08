@@ -18,21 +18,25 @@ output "key_vault_id" {
 output "storage_account_id" {
   value       = module.initial_setup.storage_account_id
   description = "The storage account ID"
+  sensitive   = true
 }
 
 output "storage_account_name" {
   value       = module.initial_setup.storage_account_name
   description = "The storage account name"
+  sensitive   = true
 }
 
 output "log_analytics_workspace_id" {
   value       = module.initial_setup.log_analytics_workspace_id
   description = "The log analytics workspace id"
+  sensitive   = true
 }
 
 output "log_analytics_id" {
   value       = module.initial_setup.log_analytics_id
   description = "The log analytics id"
+  sensitive   = true
 }
 
 output "log_analytics_name" {
