@@ -1,6 +1,3 @@
-trigger: none
-pool: ubuntu-20.04-latest
-
 stages:
 - stage: InitialDeploymentStage
   displayName: Initial Deployment
@@ -46,12 +43,12 @@ stages:
             addSpnToEnvironment: true
 
         - script: |
-            terraform init \
+            terraform chdir=terraform/setup init \
               -backend-config="storage_account_name=$(storageAccountName)" \
               -backend-config="container_name=$(storageContainerName)" \
               -backend-config="subscription_id=$(SUBSCRIPTION_ID)" \
               -backend-config="tenant_id=$(TENANT_ID)"
-            terraform plan -out=initial_config \
+            terraform chdir=terraform/setup plan -out=initial_config \
               -var 'user_principal_id=$(userPrincipalId)' \
               -var 'aviatrix_customer_id=$(aviatrixCustomerId)' \
               -var 'azure_subscription_id=$(SUBSCRIPTION_ID)' \
@@ -64,7 +61,6 @@ stages:
               -var 'gcp_project_id=$(gcpProjectId)' \
               -var 'gcp_secret_json=$(gcpSecretJson)'
             terraform apply initial_config
-          workingDirectory: initial_setup
           displayName: Perform Terraform Operations
           env:
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
