@@ -6,11 +6,13 @@ output "resource_group_name" {
 output "key_vault_name" {
   value       = module.initial_setup.key_vault_name
   description = "The key vault name"
+  sensitive   = true
 }
 
 output "key_vault_id" {
   value       = module.initial_setup.key_vault_id
   description = "The key vault ID"
+  sensitive   = true
 }
 
 output "storage_account_id" {
