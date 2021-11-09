@@ -10,4 +10,5 @@ module "azure_ussc_hub" {
   controller_admin_password          = data.terraform_remote_state.initial_config.outputs.controller_admin_password
   user_public_for_mgmt               = data.terraform_remote_state.controller.outputs.user_public_ip_address
   key_vault_id                       = data.terraform_remote_state.initial_config.outputs.key_vault_id
+  firenet_enabled                    = false
 }
