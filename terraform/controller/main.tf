@@ -14,7 +14,6 @@ module "azure_aviatrix_controller" {
   log_analytics_workspace_id         = data.terraform_remote_state.initial_config.outputs.log_analytics_workspace_id
   log_analytics_id                   = data.terraform_remote_state.initial_config.outputs.log_analytics_id
   log_analytics_location             = data.terraform_remote_state.initial_config.outputs.log_analytics_region
-  backup_storage_account             = data.terraform_remote_state.initial_config.outputs.storage_account_name
   azure_application_key              = data.terraform_remote_state.initial_config.outputs.azure_application_key
   controller_admin_password          = data.terraform_remote_state.initial_config.outputs.controller_admin_password
   controller_customer_id             = data.terraform_remote_state.initial_config.outputs.aviatrix_customer_id
