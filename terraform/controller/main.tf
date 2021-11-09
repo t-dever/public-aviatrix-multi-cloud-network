@@ -1,7 +1,7 @@
 # Initial Setup with create the Resource Group, Storage Account, and Storage Account Container for state files
 
 module "azure_aviatrix_controller" {
-  source = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/aviatrix_controller?ref=features/addAzureController"
+  source = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/aviatrix_controller?ref=v1.0.0"
   location                           = "South Central US"
   resource_prefix                    = "travis-ussc-controller"
   vnet_address_prefix                = "10.0.0.0/16"
