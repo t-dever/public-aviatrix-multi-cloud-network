@@ -7,9 +7,9 @@ stages:
     - job: InitialDeploymentJob
       displayName: Initial Deployment
       variables:
-        ${{ if eq(Build.Reason, 'PullRequest' ) }}:
+        ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
           deploy: ""
-        ${{ if ne(Build.Reason, 'PullRequest' ) }}:
+        ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
           deploy: "terraform -chdir=terraform/setup apply initial_config"
       steps:
         - template: ../common.yml
