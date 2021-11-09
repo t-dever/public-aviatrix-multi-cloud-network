@@ -8,9 +8,9 @@ stages:
       displayName: Aviatrix Controller Deployment
       variables:
         ${{ if eq(Build.Reason, 'PullRequest' ) }}:
-          deploy: "terraform -chdir=terraform/controller apply controller"
-        ${{ if ne(Build.Reason, 'PullRequest' ) }}:
           deploy: ""
+        ${{ if ne(Build.Reason, 'PullRequest' ) }}:
+          deploy: "terraform -chdir=terraform/controller apply controller"
       steps:
         - template: ../common.yml
           parameters:
