@@ -1,0 +1,35 @@
+stages:
+- stage: TransitsDeploymentStage
+  displayName: Transits Deployment
+  variables:
+    - group: aviatrix-variables
+  jobs:
+    - job: TransitDeploymentJob
+      displayName: Transits Deployment
+      variables:
+        terraform_path: terraform/network/azure/hubs
+        plan_file: azure_hub
+        ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+          deploy: ""
+        ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+          deploy: "terraform -chdir=${{ variables.terraform_path }} apply ${{ variables.plan_file }}"
+      steps:
+        - template: ../common.yml
+          parameters:
+            serviceConnectionName: TRAVIS_CONNECTION
+
+        - script: |
+            terraform -chdir=${{ variables.terraform_path }} init \
+              -backend-config="storage_account_name=$(storageAccountName)" \
+              -backend-config="container_name=$(storageContainerName)" \
+              -backend-config="subscription_id=$(SUBSCRIPTION_ID)" \
+              -backend-config="tenant_id=$(TENANT_ID)"
+            terraform -chdir=${{ variables.terraform_path }} plan -out=${{ variables.plan_file }} \
+              -var 'state_storage_account_name=$(storageAccountName)'
+            ${{ variables.deploy }}
+          displayName: Deploy Azure Transits via Terraform
+          env:
+            ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
+            ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+            ARM_TENANT_ID: $(TENANT_ID)
+            ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)
