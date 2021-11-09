@@ -1,0 +1,27 @@
+parameters:
+- name: serviceConnectionName
+  type: string
+
+steps:
+- task: AzureCLI@2
+  displayName: Get Service Connection Information
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnectionName }}
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      subscription_id=$(az account show -o json --query id | sed -e 's/^"//' -e 's/"$//')
+      spn_object_id=$(az ad sp show --id $servicePrincipalId -o json --query objectId | sed -e 's/^"//' -e 's/"$//')
+      echo "##vso[task.setvariable variable=SUBSCRIPTION_ID;]$subscription_id"
+      echo "##vso[task.setvariable variable=SERVICE_PRINCIPAL_OBJECT_ID;]$spn_object_id"
+      echo "##vso[task.setvariable variable=SERVICE_PRINCIPAL_ID;]$servicePrincipalId"
+      echo "##vso[task.setvariable variable=SERVICE_PRINCIPAL_KEY;]$servicePrincipalKey"
+      echo "##vso[task.setvariable variable=TENANT_ID;]$tenantId"
+    addSpnToEnvironment: true
+
+- script: |
+    sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+    sudo apt-get update && sudo apt-get install terraform
+  displayName: Installing Terraform
