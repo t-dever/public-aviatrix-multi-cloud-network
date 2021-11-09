@@ -1,7 +1,5 @@
-# Initial Setup with create the Resource Group, Storage Account, and Storage Account Container for state files
-
 module "azure_aviatrix_controller" {
-  source = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/aviatrix_controller?ref=v1.0.0"
+  source                             = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/aviatrix_controller?ref=v1.0.1"
   location                           = "South Central US"
   resource_prefix                    = "travis-ussc-controller"
   vnet_address_prefix                = "10.0.0.0/16"
@@ -11,6 +9,7 @@ module "azure_aviatrix_controller" {
   aviatrix_azure_access_account_name = "tdever-azure-account"
   controller_version                 = "UserConnect-6.5.2613"
   controller_user_public_ip_address  = var.user_public_ip_address
+  build_agent_ip_address             = var.build_agent_ip_address
   log_analytics_workspace_id         = data.terraform_remote_state.initial_config.outputs.log_analytics_workspace_id
   log_analytics_id                   = data.terraform_remote_state.initial_config.outputs.log_analytics_id
   log_analytics_location             = data.terraform_remote_state.initial_config.outputs.log_analytics_region
