@@ -24,7 +24,8 @@ stages:
               -backend-config="tenant_id=$(TENANT_ID)"
             terraform -chdir=terraform/controller plan -out=controller \
               -var 'state_storage_account_name=$(storageAccountName)' \
-              -var 'user_public_ip_address=$(userPublicIpAddress)'
+              -var 'user_public_ip_address=$(userPublicIpAddress)' \
+              -var 'build_agent_ip_address=$(buildAgentPublicIpAddress)'
             ${{ variables.deploy }}
           displayName: Deploy Controller via Terraform
           env:
