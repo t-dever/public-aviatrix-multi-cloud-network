@@ -2,45 +2,49 @@ stages:
 - stage: InitialDeploymentStage
   displayName: Initial Deployment
   variables:
-    - group: aviatrix-initial-setup
+    - group: aviatrix-variables
   jobs:
     - job: InitialDeploymentJob
       displayName: Initial Deployment
+      variables:
+        ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+          deploy: ""
+        ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+          deploy: "terraform -chdir=terraform/setup apply initial_config"
       steps:
         - template: ../common.yml
           parameters:
             serviceConnectionName: TRAVIS_CONNECTION
-
-        - task: AzureCLI@2
-          displayName: Create Resource Group, Storage Account and Container
-          inputs:
-            azureSubscription: TRAVIS_CONNECTION
-            scriptType: bash
-            scriptLocation: inlineScript
-            inlineScript: |
-              az group create --location $(location) --name $(resourceGroupName)
-              az storage account create \
-                --name $(storageAccountName) \
-                --resource-group $(resourceGroupName) \
-                --https-only true \
-                --location $(location) \
-                --sku Standard_GRS \
-                --kind StorageV2 \
-                --allow-blob-public-access false \
-                --allow-shared-key-access false \
-                --min-tls-version TLS1_2
-              az role assignment create \
-                --role "Storage Blob Data Owner" \
-                --scope "/subscriptions/$(SUBSCRIPTION_ID)/resourceGroups/$(resourceGroupName)/providers/Microsoft.Storage/storageAccounts/$(storageAccountName)" \
-                --assignee-principal-type ServicePrincipal \
-                --assignee-object-id $(SERVICE_PRINCIPAL_OBJECT_ID) \
-                --subscription $(SUBSCRIPTION_ID)
-              az storage container create \
-                --name $(storageContainerName) \
-                --account-name $(storageAccountName) \
-                --auth-mode login \
-                --public-access off
-            addSpnToEnvironment: true
+        - ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+          - task: AzureCLI@2
+            displayName: Create Resource Group, Storage Account and Container
+            inputs:
+              azureSubscription: TRAVIS_CONNECTION
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az group create --location $(location) --name $(resourceGroupName)
+                az storage account create \
+                  --name $(storageAccountName) \
+                  --resource-group $(resourceGroupName) \
+                  --https-only true \
+                  --location $(location) \
+                  --sku Standard_GRS \
+                  --kind StorageV2 \
+                  --allow-blob-public-access false \
+                  --allow-shared-key-access false \
+                  --min-tls-version TLS1_2
+                az role assignment create \
+                  --role "Storage Blob Data Owner" \
+                  --scope "/subscriptions/$(SUBSCRIPTION_ID)/resourceGroups/$(resourceGroupName)/providers/Microsoft.Storage/storageAccounts/$(storageAccountName)" \
+                  --assignee-principal-type ServicePrincipal \
+                  --assignee-object-id $(SERVICE_PRINCIPAL_OBJECT_ID) \
+                  --subscription $(SUBSCRIPTION_ID)
+                az storage container create \
+                  --name $(storageContainerName) \
+                  --account-name $(storageAccountName) \
+                  --auth-mode login \
+                  --public-access off
 
         - script: |
             terraform -chdir=terraform/setup init \
@@ -60,7 +64,7 @@ stages:
               -var 'aws_account_number=$(awsAccountNumber)' \
               -var 'gcp_project_id=$(gcpProjectId)' \
               -var 'gcp_secret_json=$(gcpSecretJson)'
-            terraform -chdir=terraform/setup apply initial_config
+            ${{ variables.deploy }}
           displayName: Perform Terraform Operations
           env:
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)

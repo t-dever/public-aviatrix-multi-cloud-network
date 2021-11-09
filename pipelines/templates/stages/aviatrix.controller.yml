@@ -1,0 +1,34 @@
+stages:
+- stage: ControllerDeploymentStage
+  displayName: Aviatrix Controller Deployment
+  variables:
+    - group: aviatrix-variables
+  jobs:
+    - job: ControllerDeploymentJob
+      displayName: Aviatrix Controller Deployment
+      variables:
+        ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+          deploy: ""
+        ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+          deploy: "terraform -chdir=terraform/controller apply controller"
+      steps:
+        - template: ../common.yml
+          parameters:
+            serviceConnectionName: TRAVIS_CONNECTION
+
+        - script: |
+            terraform -chdir=terraform/controller init \
+              -backend-config="storage_account_name=$(storageAccountName)" \
+              -backend-config="container_name=$(storageContainerName)" \
+              -backend-config="subscription_id=$(SUBSCRIPTION_ID)" \
+              -backend-config="tenant_id=$(TENANT_ID)"
+            terraform -chdir=terraform/controller plan -out=controller \
+              -var 'state_storage_account_name=$(storageAccountName)' \
+              -var 'user_public_ip_address=$(userPublicIpAddress)'
+            ${{ variables.deploy }}
+          displayName: Deploy Controller via Terraform
+          env:
+            ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
+            ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+            ARM_TENANT_ID: $(TENANT_ID)
+            ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)
