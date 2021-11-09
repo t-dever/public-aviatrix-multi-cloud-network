@@ -6,6 +6,11 @@ stages:
   jobs:
     - job: ControllerDeploymentJob
       displayName: Aviatrix Controller Deployment
+      variables:
+        ${{ if eq(Build.Reason, 'PullRequest' ) }}:
+          deploy: "terraform -chdir=terraform/controller apply controller"
+        ${{ if ne(Build.Reason, 'PullRequest' ) }}:
+          deploy: ""
       steps:
         - template: ../common.yml
           parameters:
@@ -20,7 +25,7 @@ stages:
             terraform -chdir=terraform/controller plan -out=controller \
               -var 'state_storage_account_name=$(storageAccountName)' \
               -var 'user_public_ip_address=$(userPublicIpAddress)'
-            terraform -chdir=terraform/controller apply controller
+            ${{ variables.deploy }}
           displayName: Deploy Controller via Terraform
           env:
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
