@@ -2,7 +2,7 @@ stages:
 - stage: InitialDeploymentStage
   displayName: Initial Deployment
   variables:
-    - group: aviatrix-initial-setup
+    - group: aviatrix-variables
   jobs:
     - job: InitialDeploymentJob
       displayName: Initial Deployment
