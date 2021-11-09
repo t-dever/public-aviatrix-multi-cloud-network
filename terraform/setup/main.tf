@@ -1,7 +1,7 @@
 # Initial Setup with create the Resource Group, Storage Account, and Storage Account Container for state files
 
 module "initial_setup" {
-  source = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/initial_setup?ref=v1.0.0"
+  source = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/initial_setup?ref=v1.0.1"
   resource_prefix       = "travis-control"
   location              = "South Central US"
   user_principal_id     = var.user_principal_id
