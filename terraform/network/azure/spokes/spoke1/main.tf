@@ -18,6 +18,10 @@ data "terraform_remote_state" "controller" {
   }
 }
 
+# terraform {
+#   backend "azurerm" {}
+# }
+
 module "azure_spoke1" {
   source                                 = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/spokes?ref=features/addAzureSpokes"
   resource_prefix                        = "travis-ussc-spoke1"
