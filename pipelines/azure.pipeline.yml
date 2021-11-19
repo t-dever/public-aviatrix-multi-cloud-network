@@ -1,5 +1,5 @@
 trigger: none
-pool: ubuntu-20.04-latest
+pool: ubuntu20-latest
 
 stages:
   - template: templates/stages/initial.setup.yml
