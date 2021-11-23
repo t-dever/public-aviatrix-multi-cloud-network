@@ -34,7 +34,7 @@ stages:
             inputs:
               azureSubscription: ${{ parameters.serviceConnectionName }}
               KeyVaultName: $(azureKeyVaultName)
-              SecretsFilter: '${{ variables.aviatrixControllerSecretName }}'
+              SecretsFilter: $(aviatrixControllerSecretName)
 
           - script: |
               cd $(terraform_path)
@@ -47,7 +47,7 @@ stages:
               REMOTE_STATE_STORAGE_ACCOUNT: $(storageAccountName)
               AVIATRIX_CONTROLLER_USERNAME: $(aviatrixControllerUsername)
               AVIATRIX_CONTROLLER_IP: $(aviatrixControllerIp)
-              AVIATRIX_CONTROLLER_PASSWORD: $(${{ variables.aviatrixControllerSecretName }})
+              AVIATRIX_CONTROLLER_PASSWORD: $(aviatrixControllerSecretName)
               AVIATRIX_ACCESS_ACCOUNT: $(aviatrixAzureAccessAcountName)
               KEY_VAULT_ID: $(azureKeyVaultId)
               USER_PUBLIC_IP: $(userPublicIpAddress)
