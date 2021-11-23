@@ -1,3 +1,7 @@
+parameters:
+- name: regions
+  type: object
+
 stages:
 - stage: TransitsDeploymentStage
   displayName: Transits Deployment
