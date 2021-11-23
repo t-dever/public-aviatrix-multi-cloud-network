@@ -32,7 +32,7 @@ stages:
           - task: AzureKeyVault@2
             inputs:
               azureSubscription: ${{ parameters.serviceConnectionName }}
-              KeyVaultName: $[replace($(resourceGroupName), '-rg', '-kv')]
+              KeyVaultName: ${{ replace($(resourceGroupName), '-rg', '-kv') }}
               SecretsFilter: $(aviatrixControllerSecretName)
 
           - script: |
