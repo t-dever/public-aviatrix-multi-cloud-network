@@ -63,6 +63,8 @@ stages:
             ${{ variables.deploy }}
           displayName: Perform Terraform Operations
           env:
+            REMOTE_STATE_RESOURCE_GROUP: $(resourceGroupName)
+            REMOTE_STATE_STORAGE_ACCOUNT: $(storageAccountName)
             USER_PRINCIPAL_ID: $(userPrincipalId)
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
             ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
