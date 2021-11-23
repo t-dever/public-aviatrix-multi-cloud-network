@@ -1,6 +1,8 @@
 parameters:
 - name: environment
   type: string
+- name: serviceConnectionName
+  type: string
 
 stages:
 - stage: InitialDeploymentStage
@@ -11,21 +13,23 @@ stages:
     - job: InitialDeploymentJob
       displayName: Initial Deployment
       variables:
-        terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/management/setup
-        plan_file: initial_config
+        terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/management/state
+        plan_file: state_setup
+        plan: "terragrunt plan -out=${{ variables.plan_file }}"
         ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
           deploy: ""
         ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
-          deploy: "terraform -chdir=${{ variables.terraform_path }} apply ${{ variables.plan_file }}"
+          deploy: "terragrunt apply ${{ variables.plan_file }}"
       steps:
         - template: ../common.yml
           parameters:
-            serviceConnectionName: TRAVIS_CONNECTION
+            serviceConnectionName: ${{ parameters.serviceConnectionName }}
+
         - ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
           - task: AzureCLI@2
             displayName: Create Resource Group, Storage Account and Container
             inputs:
-              azureSubscription: TRAVIS_CONNECTION
+              azureSubscription: ${{ parameters.serviceConnectionName }}
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
@@ -53,26 +57,13 @@ stages:
                   --public-access off
 
         - script: |
-            terraform -chdir=${{ variables.terraform_path }} init \
-              -backend-config="storage_account_name=$(storageAccountName)" \
-              -backend-config="container_name=$(storageContainerName)" \
-              -backend-config="subscription_id=$(SUBSCRIPTION_ID)" \
-              -backend-config="tenant_id=$(TENANT_ID)"
-            terraform -chdir=${{ variables.terraform_path }} plan -out=${{ variables.plan_file }} \
-              -var 'user_principal_id=$(userPrincipalId)' \
-              -var 'aviatrix_customer_id=$(aviatrixCustomerId)' \
-              -var 'azure_subscription_id=$(SUBSCRIPTION_ID)' \
-              -var 'azure_tenant_id=$(TENANT_ID)' \
-              -var 'azure_application_id=$(SERVICE_PRINCIPAL_ID)' \
-              -var 'azure_application_key=$(SERVICE_PRINCIPAL_KEY)' \
-              -var 'aws_access_key=$(awsAccessKey)' \
-              -var 'aws_secret_key=$(awsSecretKey)' \
-              -var 'aws_account_number=$(awsAccountNumber)' \
-              -var 'gcp_project_id=$(gcpProjectId)' \
-              -var 'gcp_secret_json=$(gcpSecretJson)'
+            cd $(terraform_path)
+            terragrunt init
+            ${{ variables.plan }}
             ${{ variables.deploy }}
           displayName: Perform Terraform Operations
           env:
+            USER_PRINCIPAL_ID: $(userPrincipalId)
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
             ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
             ARM_TENANT_ID: $(TENANT_ID)

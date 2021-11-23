@@ -3,15 +3,17 @@ pool: ubuntu20-latest
 
 variables:
   environment: dev
+  serviceConnectionName: TRAVIS_CONNECTION
 
 stages:
   - template: templates/stages/initial.setup.yml
     parameters:
       environment: ${{ variables.environment }}
+      serviceConnectionName: ${{ variables.serviceConnectionName }}
   - template: templates/stages/aviatrix.controller.yml
   - template: templates/stages/transits.yml
     parameters:
-      serviceConnectionName: TRAVIS_CONNECTION
+      serviceConnectionName: ${{ variables.serviceConnectionName }}
       environment: ${{ variables.environment }}
       azureRegions:
         - east-us-1

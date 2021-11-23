@@ -19,20 +19,15 @@ stages:
         variables:
           terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure/${{ region }}/hub
           plan_file: azure_hub
+          plan: "terragrunt plan -out=${{ variables.plan_file }}"
           ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
-            plan: "terragrunt plan -out=${{ variables.plan_file }}"
             deploy: ""
           ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
-            plan: "terragrunt plan -out=${{ variables.plan_file }}"
             deploy: "terragrunt apply ${{ variables.plan_file }}"
         steps:
           - template: ../common.yml
             parameters:
               serviceConnectionName: ${{ parameters.serviceConnectionName }}
-
-          - script: |
-              echo '$(aviatrixControllerSecretName)'
-              echo '${{ variables.aviatrixControllerSecretName }}'
 
           - task: AzureKeyVault@2
             inputs:
