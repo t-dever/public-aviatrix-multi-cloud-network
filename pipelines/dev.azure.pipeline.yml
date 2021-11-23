@@ -9,6 +9,7 @@ stages:
   - template: templates/stages/aviatrix.controller.yml
   - template: templates/stages/transits.yml
     parameters:
+      serviceConnectionName: TRAVIS_CONNECTION
       environment: ${{ variables.environment }}
       azureRegions:
         - east-us-1
