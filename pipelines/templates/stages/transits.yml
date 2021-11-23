@@ -10,12 +10,12 @@ stages:
 - ${{ each region in parameters.azureRegions }}:
   - stage: ${{ replace(region, '-', '_') }}TransitsDeploymentStage
     dependsOn: [ ControllerDeploymentStage ]
-    displayName: Azure Hub ${{ upper(region) }} Deployment
+    displayName: Azure Hub ${{ region }}
     variables:
       - group: aviatrix-variables
     jobs:
       - job: ${{ replace(region, '-', '_') }}TransitDeploymentJob
-        displayName: Azure Hub ${{ upper(region) }} Deployment
+        displayName: Azure Hub ${{ region }}
         variables:
           terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure/${{ region }}/hub
           plan_file: azure_hub
@@ -39,8 +39,8 @@ stages:
           - script: |
               cd $(terraform_path)
               terragrunt init
-              # ${{ variables.plan }}
-              # ${{ variables.deploy }}
+              ${{ variables.plan }}
+              ${{ variables.deploy }}
             displayName: Deploy Azure Transits via Terraform
             env:
               REMOTE_STATE_RESOURCE_GROUP: $(resourceGroupName)
