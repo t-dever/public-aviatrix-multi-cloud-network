@@ -34,8 +34,8 @@ stages:
               echo '$(aviatrixControllerSecretName)'
               echo '${{ variables.aviatrixControllerSecretName }}'
               echo '${{ aviatrixControllerSecretName }}'
-              echo $(aviatrixControllerSecretName)
-              echo ${{ variables.aviatrixControllerSecretName }}
+              # echo $(aviatrixControllerSecretName)
+              # echo ${{ variables.aviatrixControllerSecretName }}
 
           - task: AzureKeyVault@2
             inputs:
@@ -43,13 +43,13 @@ stages:
               KeyVaultName: $(azureKeyVaultName)
               SecretsFilter: $(aviatrixControllerSecretName)
 
-          - script: |
-              echo '$(aviatrixControllerSecretName)'
-              echo '${{ variables.aviatrixControllerSecretName }}'
-              echo '${{ aviatrixControllerSecretName }}'
-              echo $(aviatrixControllerSecretName)
-              echo ${{ variables.aviatrixControllerSecretName }}
-              echo $($(aviatrixControllerSecretName))
+          # - script: |
+          #     echo '$(aviatrixControllerSecretName)'
+          #     echo '${{ variables.aviatrixControllerSecretName }}'
+          #     echo '${{ aviatrixControllerSecretName }}'
+          #     echo $(aviatrixControllerSecretName)
+          #     echo ${{ variables.aviatrixControllerSecretName }}
+          #     echo $($(aviatrixControllerSecretName))
 
           - script: |
               cd $(terraform_path)
