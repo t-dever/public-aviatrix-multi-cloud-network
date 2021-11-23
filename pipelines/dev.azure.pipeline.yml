@@ -6,7 +6,7 @@ variables:
   serviceConnectionName: TRAVIS_CONNECTION
 
 stages:
-  - template: templates/stages/initial.setup.yml
+  - template: templates/stages/state.setup.yml
     parameters:
       environment: ${{ variables.environment }}
       serviceConnectionName: ${{ variables.serviceConnectionName }}
