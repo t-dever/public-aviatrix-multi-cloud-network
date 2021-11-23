@@ -1,7 +1,15 @@
 trigger: none
 pool: ubuntu20-latest
 
+variables:
+  environment: dev
+
 stages:
   - template: templates/stages/initial.setup.yml
   - template: templates/stages/aviatrix.controller.yml
   - template: templates/stages/transits.yml
+    parameters:
+      environment: ${{ variables.environment }}
+      azureRegions:
+        - east-us-1
+        - south-central-us

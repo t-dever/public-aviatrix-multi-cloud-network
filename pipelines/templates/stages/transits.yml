@@ -1,39 +1,55 @@
 parameters:
-- name: regions
+- name: azureRegions
   type: object
+- name: environment
+  type: string
+
 
 stages:
-- stage: TransitsDeploymentStage
-  displayName: Transits Deployment
-  variables:
-    - group: aviatrix-variables
-  jobs:
-    - job: TransitDeploymentJob
-      displayName: Transits Deployment
-      variables:
-        terraform_path: terraform/network/azure/hubs
-        plan_file: azure_hub
-        ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
-          deploy: ""
-        ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
-          deploy: "terraform -chdir=${{ variables.terraform_path }} apply ${{ variables.plan_file }}"
-      steps:
-        - template: ../common.yml
-          parameters:
-            serviceConnectionName: TRAVIS_CONNECTION
+-${{ each region in parameters.azureRegions }}:
+  - stage: TransitsDeploymentStage
+    displayName: Transits Deployment
+    variables:
+      - group: aviatrix-variables
+    jobs:
+      - job: TransitDeploymentJob
+        displayName: Transits Deployment
+        variables:
+          terraform_path: terraform/${{ parameters.environment }}/azure/${{ region }}/hub
+          plan_file: azure_hub
+          ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+            plan: "terragrunt plan -out=${{ variables.plan_file }}"
+            deploy: ""
+          ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+            plan: "terragrunt plan -out=${{ variables.plan_file }}"
+            deploy: "terraform -chdir=${{ variables.terraform_path }} apply ${{ variables.plan_file }}"
+        steps:
+          - template: ../common.yml
+            parameters:
+              serviceConnectionName: TRAVIS_CONNECTION
 
-        - script: |
-            terraform -chdir=${{ variables.terraform_path }} init \
-              -backend-config="storage_account_name=$(storageAccountName)" \
-              -backend-config="container_name=$(storageContainerName)" \
-              -backend-config="subscription_id=$(SUBSCRIPTION_ID)" \
-              -backend-config="tenant_id=$(TENANT_ID)"
-            terraform -chdir=${{ variables.terraform_path }} plan -out=${{ variables.plan_file }} \
-              -var 'state_storage_account_name=$(storageAccountName)'
-            ${{ variables.deploy }}
-          displayName: Deploy Azure Transits via Terraform
-          env:
-            ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
-            ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
-            ARM_TENANT_ID: $(TENANT_ID)
-            ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)
+          - task: AzureKeyVault@2
+            inputs:
+              azureSubscription: 'Your-Azure-Subscription'
+              KeyVaultName: 'Your-Key-Vault-Name'
+              SecretsFilter: '$(aviatrixControllerSecretName)'
+
+          - script: |
+              cd $(System.DefaultWorkingDirectory)/$(terraform_path)
+              terragrunt init
+              ${{ variables.plan }}
+              ${{ variables.deploy }}
+            displayName: Deploy Azure Transits via Terraform
+            env:
+              REMOTE_STATE_RESOURCE_GROUP: $(resourceGroupName)
+              REMOTE_STATE_STORAGE_ACCOUNT: $(traviscontrolsa)
+              AVIATRIX_CONTROLLER_USERNAME: $(aviatrixControllerUsername)
+              AVIATRIX_CONTROLLER_IP: $(aviatrixControllerIp)
+              AVIATRIX_CONTROLLER_PASSWORD: $($(aviatrixControllerSecretName))
+              AVIATRIX_ACCESS_ACCOUNT: $(aviatrixAzureAccessAcountName)
+              KEY_VAULT_ID: $(azureKeyVaultId)
+              USER_PUBLIC_IP: $(userPublicIpAddress)
+              ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
+              ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(TENANT_ID)
+              ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)
