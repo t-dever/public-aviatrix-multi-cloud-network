@@ -11,6 +11,9 @@ stages:
       environment: ${{ variables.environment }}
       serviceConnectionName: ${{ variables.serviceConnectionName }}
   - template: templates/stages/aviatrix.controller.yml
+    parameters:
+      serviceConnectionName: ${{ variables.serviceConnectionName }}
+      environment: ${{ variables.environment }}
   - template: templates/stages/transits.yml
     parameters:
       serviceConnectionName: ${{ variables.serviceConnectionName }}

@@ -5,12 +5,12 @@ parameters:
   type: string
 
 stages:
-- stage: InitialDeploymentStage
+- stage: StateDeploymentStage
   displayName: Initial Deployment
   variables:
     - group: aviatrix-variables
   jobs:
-    - job: InitialDeploymentJob
+    - job: StateDeploymentJob
       displayName: Initial Deployment
       variables:
         terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/management/state
@@ -61,7 +61,7 @@ stages:
             terragrunt init
             ${{ variables.plan }}
             ${{ variables.deploy }}
-          displayName: Perform Terraform Operations
+          displayName: Deploy State Resources via Terraform
           env:
             REMOTE_STATE_RESOURCE_GROUP: $(resourceGroupName)
             REMOTE_STATE_STORAGE_ACCOUNT: $(storageAccountName)
