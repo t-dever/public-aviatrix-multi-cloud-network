@@ -10,12 +10,12 @@ stages:
 - ${{ each region in parameters.azureRegions }}:
   - stage: ${{ replace(region, '-', '_') }}TransitsDeploymentStage
     dependsOn: [ ControllerDeploymentStage ]
-    displayName: Azure Hub ${{ region }} Deployment
+    displayName: Azure Hub ${{ upper(region) }} Deployment
     variables:
       - group: aviatrix-variables
     jobs:
       - job: ${{ replace(region, '-', '_') }}TransitDeploymentJob
-        displayName: Azure Hub ${{ region }} Deployment
+        displayName: Azure Hub ${{ upper(region) }} Deployment
         variables:
           terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure/${{ region }}/hub
           plan_file: azure_hub
@@ -24,7 +24,7 @@ stages:
             deploy: ""
           ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
             plan: "terragrunt plan -out=${{ variables.plan_file }}"
-            deploy: "terraform -chdir=${{ variables.terraform_path }} apply ${{ variables.plan_file }}"
+            deploy: "terragrunt apply ${{ variables.plan_file }}"
         steps:
           - template: ../common.yml
             parameters:
@@ -39,8 +39,8 @@ stages:
           - script: |
               cd $(terraform_path)
               terragrunt init
-              ${{ variables.plan }}
-              ${{ variables.deploy }}
+              # ${{ variables.plan }}
+              # ${{ variables.deploy }}
             displayName: Deploy Azure Transits via Terraform
             env:
               REMOTE_STATE_RESOURCE_GROUP: $(resourceGroupName)
