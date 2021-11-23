@@ -6,6 +6,8 @@ variables:
 
 stages:
   - template: templates/stages/initial.setup.yml
+    parameters:
+      environment: ${{ variables.environment }}
   - template: templates/stages/aviatrix.controller.yml
   - template: templates/stages/transits.yml
     parameters:
