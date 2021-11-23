@@ -44,7 +44,7 @@ stages:
             displayName: Deploy Azure Transits via Terraform
             env:
               REMOTE_STATE_RESOURCE_GROUP: $(resourceGroupName)
-              REMOTE_STATE_STORAGE_ACCOUNT: $(traviscontrolsa)
+              REMOTE_STATE_STORAGE_ACCOUNT: $(storageAccountName)
               AVIATRIX_CONTROLLER_USERNAME: $(aviatrixControllerUsername)
               AVIATRIX_CONTROLLER_IP: $(aviatrixControllerIp)
               AVIATRIX_CONTROLLER_PASSWORD: $($(aviatrixControllerSecretName))
