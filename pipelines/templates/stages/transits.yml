@@ -33,7 +33,7 @@ stages:
           - script: |
               echo '$(aviatrixControllerSecretName)'
               echo '${{ variables.aviatrixControllerSecretName }}'
-              echo '${{ aviatrixControllerSecretName }}'
+              # echo '${{ aviatrixControllerSecretName }}'
               # echo $(aviatrixControllerSecretName)
               # echo ${{ variables.aviatrixControllerSecretName }}
 
