@@ -7,13 +7,13 @@ parameters:
 
 stages:
 - ${{ each region in parameters.azureRegions }}:
-  - stage: TransitsDeploymentStage
-    displayName: Transits Deployment
+  - stage: ${{ replace(region, '-', '_') }}TransitsDeploymentStage
+    displayName: ${{ region }} Deployment
     variables:
       - group: aviatrix-variables
     jobs:
-      - job: TransitDeploymentJob
-        displayName: Transits Deployment
+      - job: ${{ replace(region, '-', '_') }}TransitDeploymentJob
+        displayName: ${{ region }} Deployment
         variables:
           terraform_path: terraform/${{ parameters.environment }}/azure/${{ region }}/hub
           plan_file: azure_hub
