@@ -6,7 +6,7 @@ parameters:
 
 
 stages:
--${{ each region in parameters.azureRegions }}:
+- ${{ each region in parameters.azureRegions }}:
   - stage: TransitsDeploymentStage
     displayName: Transits Deployment
     variables:
