@@ -9,6 +9,7 @@ parameters:
 stages:
 - ${{ each region in parameters.azureRegions }}:
   - stage: ${{ replace(region, '-', '_') }}TransitsDeploymentStage
+    dependsOn: [ ControllerDeploymentStage ]
     displayName: Azure Hub ${{ region }} Deployment
     variables:
       - group: aviatrix-variables
