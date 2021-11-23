@@ -8,7 +8,7 @@ stages:
 - stage: StateDeploymentStage
   displayName: Initial Deployment
   variables:
-    - group: aviatrix-variables
+    - group: ${{ parameters.environment }}-state
   jobs:
     - job: StateDeploymentJob
       displayName: Initial Deployment
@@ -33,12 +33,12 @@ stages:
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
-                az group create --location $(location) --name $(resourceGroupName)
+                az group create --location $(stateLocation) --name $(stateResourceGroupName)
                 az storage account create \
                   --name $(storageAccountName) \
-                  --resource-group $(resourceGroupName) \
+                  --resource-group $(stateResourceGroupName) \
                   --https-only true \
-                  --location $(location) \
+                  --location $(stateLocation) \
                   --sku Standard_GRS \
                   --kind StorageV2 \
                   --allow-blob-public-access false \
@@ -46,13 +46,13 @@ stages:
                   --min-tls-version TLS1_2
                 az role assignment create \
                   --role "Storage Blob Data Owner" \
-                  --scope "/subscriptions/$(SUBSCRIPTION_ID)/resourceGroups/$(resourceGroupName)/providers/Microsoft.Storage/storageAccounts/$(storageAccountName)" \
+                  --scope "/subscriptions/$(SUBSCRIPTION_ID)/resourceGroups/$(stateResourceGroupName)/providers/Microsoft.Storage/storageAccounts/$(stateStorageAccountName)" \
                   --assignee-principal-type ServicePrincipal \
                   --assignee-object-id $(SERVICE_PRINCIPAL_OBJECT_ID) \
                   --subscription $(SUBSCRIPTION_ID)
                 az storage container create \
-                  --name $(storageContainerName) \
-                  --account-name $(storageAccountName) \
+                  --name $(stateStorageContainerName) \
+                  --account-name $(stateStorageAccountName) \
                   --auth-mode login \
                   --public-access off
 
@@ -63,8 +63,8 @@ stages:
             ${{ variables.deploy }}
           displayName: Deploy State Resources via Terraform
           env:
-            REMOTE_STATE_RESOURCE_GROUP: $(resourceGroupName)
-            REMOTE_STATE_STORAGE_ACCOUNT: $(storageAccountName)
+            REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
+            REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
             USER_PRINCIPAL_ID: $(userPrincipalId)
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
             ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)

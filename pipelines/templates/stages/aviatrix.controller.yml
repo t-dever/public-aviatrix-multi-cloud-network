@@ -8,7 +8,8 @@ stages:
 - stage: ControllerDeploymentStage
   displayName: Aviatrix Controller Deployment
   variables:
-    - group: aviatrix-variables
+    - group: ${{ parameters.environment }}-state
+    - group: ${{ parameters.environment }}-controller
   jobs:
     - job: ControllerDeploymentJob
       displayName: Aviatrix Controller Deployment
@@ -32,8 +33,8 @@ stages:
             ${{ variables.deploy }}
           displayName: Deploy Controller via Terraform
           env:
-            REMOTE_STATE_RESOURCE_GROUP: $(resourceGroupName)
-            REMOTE_STATE_STORAGE_ACCOUNT: $(storageAccountName)
+            REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
+            REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
             USER_PUBLIC_IP_ADDRESS: $(userPublicIpAddress)
             BUILD_AGENT_PUBLIC_IP_ADDRESS: $(buildAgentPublicIpAddress)
             AZURE_ACCESS_ACCOUNT: $(aviatrixAzureAccessAcountName)
