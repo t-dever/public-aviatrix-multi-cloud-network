@@ -3,7 +3,8 @@ parameters:
   type: object
 - name: environment
   type: string
-
+- name: serviceConnectionName
+  type: string
 
 stages:
 - ${{ each region in parameters.azureRegions }}:
@@ -26,13 +27,13 @@ stages:
         steps:
           - template: ../common.yml
             parameters:
-              serviceConnectionName: TRAVIS_CONNECTION
+              serviceConnectionName: ${{ parameters.serviceConnectionName }}
 
           - task: AzureKeyVault@2
             inputs:
-              azureSubscription: 'Your-Azure-Subscription'
-              KeyVaultName: 'Your-Key-Vault-Name'
-              SecretsFilter: '$(aviatrixControllerSecretName)'
+              azureSubscription: ${{ parameters.serviceConnectionName }}
+              KeyVaultName: ${{ replace(variables.resourceGroupName, '-rg', '-kv') }}
+              SecretsFilter: $(aviatrixControllerSecretName)
 
           - script: |
               cd $(System.DefaultWorkingDirectory)/$(terraform_path)
