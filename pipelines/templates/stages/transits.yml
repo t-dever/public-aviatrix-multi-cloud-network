@@ -9,14 +9,14 @@ parameters:
 stages:
 - ${{ each region in parameters.azureRegions }}:
   - stage: ${{ replace(region, '-', '_') }}TransitsDeploymentStage
-    displayName: ${{ region }} Deployment
+    displayName: Azure Hub ${{ region }} Deployment
     variables:
       - group: aviatrix-variables
     jobs:
       - job: ${{ replace(region, '-', '_') }}TransitDeploymentJob
-        displayName: ${{ region }} Deployment
+        displayName: Azure Hub ${{ region }} Deployment
         variables:
-          terraform_path: terraform/${{ parameters.environment }}/azure/${{ region }}/hub
+          terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure/${{ region }}/hub
           plan_file: azure_hub
           ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
             plan: "terragrunt plan -out=${{ variables.plan_file }}"
@@ -32,11 +32,11 @@ stages:
           - task: AzureKeyVault@2
             inputs:
               azureSubscription: ${{ parameters.serviceConnectionName }}
-              KeyVaultName: ${{ replace(variables.resourceGroupName, '-rg', '-kv') }}
+              KeyVaultName: $[replace($(resourceGroupName), '-rg', '-kv')]
               SecretsFilter: $(aviatrixControllerSecretName)
 
           - script: |
-              cd $(System.DefaultWorkingDirectory)/$(terraform_path)
+              cd $(terraform_path)
               terragrunt init
               ${{ variables.plan }}
               ${{ variables.deploy }}
