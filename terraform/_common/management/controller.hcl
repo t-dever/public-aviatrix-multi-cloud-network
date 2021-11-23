@@ -1,5 +1,5 @@
 terraform {
-  source = "${local.base_source_url}?ref=features/addAzureSpokes"
+  source = "${local.base_source_url}?ref=features/updateInitialConfig"
 }
 
 locals {
