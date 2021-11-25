@@ -34,7 +34,7 @@ stages:
             inputs:
               azureSubscription: ${{ parameters.serviceConnectionName }}
               KeyVaultName: $(stateResourceGroupName)
-              SecretsFilter: 'controller-admin-pw'
+              SecretsFilter: controller-admin-pw
 
           - script: |
               cd $(terraform_path)
