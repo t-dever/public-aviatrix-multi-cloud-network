@@ -33,7 +33,7 @@ stages:
           - task: AzureKeyVault@2
             inputs:
               azureSubscription: ${{ parameters.serviceConnectionName }}
-              KeyVaultName: $(stateResourceGroupName)
+              KeyVaultName: $(replace(stateResourceGroupName, '-rg', '-kv'))
               SecretsFilter: controller-admin-pw
 
           - script: |
