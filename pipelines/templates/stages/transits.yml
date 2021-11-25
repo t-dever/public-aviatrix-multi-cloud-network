@@ -30,12 +30,6 @@ stages:
             parameters:
               serviceConnectionName: ${{ parameters.serviceConnectionName }}
 
-          # - task: AzureKeyVault@2
-          #   inputs:
-          #     azureSubscription: ${{ parameters.serviceConnectionName }}
-          #     KeyVaultName: $(replace(stateResourceGroupName, '-rg', '-kv'))
-          #     SecretsFilter: controller-admin-pw
-
           - script: |
               cd $(terraform_path)
               terragrunt init
