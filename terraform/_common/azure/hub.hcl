@@ -14,10 +14,15 @@ locals {
   region_vars = read_terragrunt_config("${dirname(find_in_parent_folders())}/_common/azure/regions/${local.region}.hcl") 
 }
 
+dependency "controller" {
+  config_path = "../../../management/controller"
+}
+
 inputs = {
   location                  = local.region_vars.locals.region,
   controller_public_ip      = local.environment_vars.locals.controller_public_ip
-  controller_admin_password = get_env("AVIATRIX_CONTROLLER_PASSWORD")
+  controller_admin_password = dependency.controller.outputs.controller_public_ip
+  key_vault_id                       = dependency.state.outputs.key_vault_id
   aviatrix_azure_account    = local.environment_vars.locals.aviatrix_azure_account
   key_vault_id              = local.environment_vars.locals.key_vault_id
   user_public_for_mgmt      = local.environment_vars.locals.user_public_for_mgmt

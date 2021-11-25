@@ -12,7 +12,8 @@ stages:
     dependsOn: [ ControllerDeploymentStage ]
     displayName: Azure Hub ${{ region }}
     variables:
-      - group: aviatrix-variables
+      - group: ${{ parameters.environment }}-state
+      - group: ${{ parameters.environment }}-controller
     jobs:
       - job: ${{ replace(region, '-', '_') }}TransitDeploymentJob
         displayName: Azure Hub ${{ region }}
@@ -42,13 +43,11 @@ stages:
               ${{ variables.deploy }}
             displayName: Deploy Azure Transits via Terraform
             env:
-              REMOTE_STATE_RESOURCE_GROUP: $(resourceGroupName)
-              REMOTE_STATE_STORAGE_ACCOUNT: $(storageAccountName)
+              REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
+              REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
               AVIATRIX_CONTROLLER_USERNAME: $(aviatrixControllerUsername)
-              AVIATRIX_CONTROLLER_IP: $(aviatrixControllerIp)
               AVIATRIX_CONTROLLER_PASSWORD: $(controller-admin-pw)
               AVIATRIX_ACCESS_ACCOUNT: $(aviatrixAzureAccessAcountName)
-              KEY_VAULT_ID: $(azureKeyVaultId)
               USER_PUBLIC_IP: $(userPublicIpAddress)
               ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
               ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
