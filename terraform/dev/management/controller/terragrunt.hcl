@@ -13,5 +13,5 @@ inputs = {
   controller_subnet_address_prefix   = "10.0.0.0/24"
   network_watcher_name               = "NetworkWatcher_southcentralus"
   admin_email                        = "tdever@aviatrix.com"
-  controller_version                 = "UserConnect-6.5.2613"
+  controller_version                 = "UserConnect-6.5.2721"
 }

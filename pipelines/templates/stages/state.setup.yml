@@ -65,7 +65,7 @@ stages:
           env:
             REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
             REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
-            USER_PRINCIPAL_ID: $(userPrincipalId)
+            USER_PRINCIPAL_ID: $(userPrincipalObjectId)
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
             ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
             ARM_TENANT_ID: $(TENANT_ID)
