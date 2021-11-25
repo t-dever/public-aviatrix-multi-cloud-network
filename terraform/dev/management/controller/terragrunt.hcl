@@ -32,6 +32,4 @@ inputs = {
   aviatrix_azure_access_account_name = get_env("AZURE_ACCESS_ACCOUNT")
   admin_email                        = get_env("ADMIN_EMAIL")
   controller_username                = get_env("AVIATRIX_CONTROLLER_USERNAME")
-  controller_public_ip               = get_env("AVIATRIX_CONTROLLER_IP")
-  controller_password                = get_env("AVIATRIX_CONTROLLER_PASSWORD")
 }

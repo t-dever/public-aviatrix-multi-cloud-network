@@ -38,6 +38,7 @@ stages:
             USER_PUBLIC_IP_ADDRESS: $(userPublicIpAddress)
             BUILD_AGENT_PUBLIC_IP_ADDRESS: $(buildAgentPublicIpAddress)
             AZURE_ACCESS_ACCOUNT: $(aviatrixAzureAccessAcountName)
+            AVIATRIX_CONTROLLER_USERNAME: $(aviatrixControllerUsername)
             CONTROLLER_CUSTOMER_ID: $(aviatrixCustomerId)
             ADMIN_EMAIL: $(adminEmail)
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
