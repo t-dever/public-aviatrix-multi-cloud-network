@@ -18,11 +18,15 @@ dependency "controller" {
   config_path = "../../../management/controller"
 }
 
+dependency "state" {
+  config_path = "../../../management/state"
+}
+
 inputs = {
   location                  = local.region_vars.locals.region,
-  controller_public_ip      = local.environment_vars.locals.controller_public_ip
-  controller_admin_password = dependency.controller.outputs.controller_public_ip
-  key_vault_id                       = dependency.state.outputs.key_vault_id
+  controller_public_ip      = dependency.controller.outputs.controller_public_ip
+  controller_admin_password = dependency.controller.outputs.controller_admin_password
+  key_vault_id              = dependency.state.outputs.key_vault_id
   aviatrix_azure_account    = local.environment_vars.locals.aviatrix_azure_account
   key_vault_id              = local.environment_vars.locals.key_vault_id
   user_public_for_mgmt      = local.environment_vars.locals.user_public_for_mgmt

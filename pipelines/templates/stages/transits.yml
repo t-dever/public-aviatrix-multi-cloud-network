@@ -30,11 +30,11 @@ stages:
             parameters:
               serviceConnectionName: ${{ parameters.serviceConnectionName }}
 
-          - task: AzureKeyVault@2
-            inputs:
-              azureSubscription: ${{ parameters.serviceConnectionName }}
-              KeyVaultName: $(replace(stateResourceGroupName, '-rg', '-kv'))
-              SecretsFilter: controller-admin-pw
+          # - task: AzureKeyVault@2
+          #   inputs:
+          #     azureSubscription: ${{ parameters.serviceConnectionName }}
+          #     KeyVaultName: $(replace(stateResourceGroupName, '-rg', '-kv'))
+          #     SecretsFilter: controller-admin-pw
 
           - script: |
               cd $(terraform_path)
@@ -46,7 +46,6 @@ stages:
               REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
               REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
               AVIATRIX_CONTROLLER_USERNAME: $(aviatrixControllerUsername)
-              AVIATRIX_CONTROLLER_PASSWORD: $(controller-admin-pw)
               AVIATRIX_ACCESS_ACCOUNT: $(aviatrixAzureAccessAcountName)
               USER_PUBLIC_IP: $(userPublicIpAddress)
               ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
