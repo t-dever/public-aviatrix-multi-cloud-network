@@ -45,9 +45,6 @@ stages:
             env:
               REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
               REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
-              AVIATRIX_CONTROLLER_USERNAME: $(aviatrixControllerUsername)
-              AVIATRIX_ACCESS_ACCOUNT: $(aviatrixAzureAccessAcountName)
-              USER_PUBLIC_IP: $(userPublicIpAddress)
               ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
               ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
               ARM_TENANT_ID: $(TENANT_ID)
