@@ -9,9 +9,9 @@ stages:
 - ${{ each region in parameters.spokes.azure }}:
   - ${{ each region.value }}:
     - stage: ${{ replace(region.value, '-', '_') }}SpokeDeploymentStage
-      dependsOn: [
-        ${{ replace(region.key, '-', '_') }}TransitsDeploymentStage
-        ]
+      # dependsOn: [
+      #   ${{ replace(region.key, '-', '_') }}TransitsDeploymentStage
+      #   ]
       displayName: Spokes Deployment
       variables:
         - group: aviatrix-variables
