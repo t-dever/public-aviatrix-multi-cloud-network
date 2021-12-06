@@ -30,6 +30,7 @@ stages:
     environment: ${{ variables.environment }}
     spokes:
       azure:
-        south-central-us:
-        - spoke1
-        - spoke2
+       - region: south-central-us
+         spokes:
+          - spoke1
+          - spoke2
