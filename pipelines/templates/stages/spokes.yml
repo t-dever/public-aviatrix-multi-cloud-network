@@ -3,6 +3,8 @@ parameters:
   type: object
 - name: environment
   type: string
+- name: serviceConnectionName
+  type: string
 stages:
 - ${{ each region in parameters.spokes.azure }}:
   - ${{ each region.value }}:
@@ -26,7 +28,7 @@ stages:
           steps:
             - template: ../common.yml
               parameters:
-                serviceConnectionName: TRAVIS_CONNECTION
+                serviceConnectionName: ${{ parameters.serviceConnectionName }}
   
           # - script: |
           #     terraform -chdir=${{ variables.terraform_path }} init \
