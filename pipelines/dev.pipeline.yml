@@ -29,8 +29,7 @@ stages:
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
     spokes:
-      azure:
-       - region: south-central-us
-         spokes:
-          - spoke1
-          - spoke2
+    - csp: azure
+      region: south-central-us
+      spokes:
+       - spoke1

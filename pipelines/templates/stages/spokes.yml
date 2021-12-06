@@ -6,12 +6,12 @@ parameters:
 - name: serviceConnectionName
   type: string
 stages:
-- ${{ each region in parameters.spokes.azure }}:
+- ${{ each region in parameters.spokes }}:
   - ${{ each spoke in region.spokes }}:
     - stage: ${{ replace(spoke, '-', '_') }}SpokeDeploymentStage
       dependsOn:
-       - "${{ replace(region.region, '-', '_') }}AzureTransitsDeploymentStage"
-      displayName: Azure ${{ spoke.key }} Deployment
+       - "${{ replace(region.region, '-', '_') }}${{ region.csp }}TransitsDeploymentStage"
+      displayName: Azure ${{ spoke }} Deployment
       variables:
         - group: aviatrix-variables
       jobs:
@@ -35,6 +35,8 @@ stages:
           #     ${{ variables.deploy }}
           #   displayName: Deploy Azure Transits via Terraform
           #   env:
+              # REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
+              # REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
           #     ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
           #     ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
           #     ARM_TENANT_ID: $(TENANT_ID)
