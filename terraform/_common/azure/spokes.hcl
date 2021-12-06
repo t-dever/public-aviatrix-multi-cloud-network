@@ -14,11 +14,11 @@ locals {
 }
 
 dependency "state" {
-  config_path = "../../../management/state"
+  config_path = "../../../../management/state"
 }
 
 dependency "controller" {
-  config_path = "../../../management/controller"
+  config_path = "../../../../management/controller"
 }
 
 dependency "hub" {
