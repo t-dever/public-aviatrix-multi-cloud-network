@@ -8,7 +8,7 @@ parameters:
 stages:
 - ${{ each region in parameters.spokes.azure }}:
   - ${{ each spoke in region.spokes }}:
-    - stage: ${{ replace(spoke.value, '-', '_') }}SpokeDeploymentStage
+    - stage: ${{ replace(spoke, '-', '_') }}SpokeDeploymentStage
       # dependsOn: [
       #   ${{ replace(region.key, '-', '_') }}TransitsDeploymentStage
       #   ]
