@@ -18,7 +18,7 @@ stages:
         - job: ${{ spoke }}SpokesDeploymentJob
           displayName: Deploy Spoke ${{ spoke }}
           variables:
-            terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ region.csp }}/${{ spoke.key }}/spokes/${{ spoke.value }}
+            terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ region.csp }}/${{ region.region }}/spokes/${{ spoke }}
             plan_file: azure_spokes
             plan: "terragrunt plan -out=${{ variables.plan_file }}"
             ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
