@@ -7,8 +7,8 @@ parameters:
   type: string
 stages:
 - ${{ each region in parameters.spokes.azure }}:
-  - ${{ each region.value }}:
-    - stage: ${{ replace(region.value, '-', '_') }}SpokeDeploymentStage
+  - ${{ each spoke in region.value }}:
+    - stage: ${{ replace(spoke.value, '-', '_') }}SpokeDeploymentStage
       # dependsOn: [
       #   ${{ replace(region.key, '-', '_') }}TransitsDeploymentStage
       #   ]
@@ -19,7 +19,7 @@ stages:
         - job: SpokesDeploymentJob
           displayName: Spokes Deployment
           variables:
-            terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure/${{ region.key }}/spokes/${{ region.value }}
+            terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure/${{ spoke.key }}/spokes/${{ spoke.value }}
             plan_file: azure_spokes
             ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
               deploy: ""
