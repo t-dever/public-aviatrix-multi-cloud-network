@@ -8,7 +8,7 @@ parameters:
 
 stages:
 - ${{ each region in parameters.azureRegions }}:
-  - stage: ${{ replace(region, '-', '_') }}TransitsDeploymentStage
+  - stage: ${{ replace(region, '-', '_') }}AzureTransitsDeploymentStage
     dependsOn: [ ControllerDeploymentStage ]
     displayName: Azure Hub ${{ region }}
     variables:

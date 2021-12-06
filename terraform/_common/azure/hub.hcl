@@ -7,7 +7,7 @@ locals {
   env = local.environment_vars.locals.environment
   environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
   # region_path: Separates directory into an array/list
-  region_path = split("/", get_terragrunt_dir()) 
+  region_path = split("/", get_terragrunt_dir())
   # region: This will take the region path to get the directory name for the region.
   region = element(local.region_path, length(local.region_path)-2)
   # region_vars: Reads the _common regions variables so they don't have to be duplicated.

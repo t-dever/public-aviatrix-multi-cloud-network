@@ -1,30 +1,40 @@
+parameters:
+- name: spokes
+  type: object
+- name: environment
+  type: string
 stages:
-- stage: SpokesDeploymentStage
-  displayName: Spokes Deployment
-  variables:
-    - group: aviatrix-variables
-  jobs:
-    - job: SpokesDeploymentJob
+- ${{ each region in parameters.spokes.azure }}:
+  - ${{ each region.value }}:
+    - stage: ${{ replace(region.value, '-', '_') }}SpokeDeploymentStage
+      dependsOn: [
+        ${{ replace(region.key, '-', '_') }}TransitsDeploymentStage
+        ]
       displayName: Spokes Deployment
       variables:
-        terraform_path: terraform/network/azure/spokes
-        plan_file: azure_spokes
-        ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
-          deploy: ""
-        ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
-          deploy: "terraform -chdir=${{ variables.terraform_path }} apply ${{ variables.plan_file }}"
-      steps:
-        - template: ../common.yml
-          parameters:
-            serviceConnectionName: TRAVIS_CONNECTION
-
-        - script: |
-            terraform -chdir=${{ variables.terraform_path }} init \
-            terraform -chdir=${{ variables.terraform_path }} plan -out=${{ variables.plan_file }} \
-            ${{ variables.deploy }}
-          displayName: Deploy Azure Transits via Terraform
-          env:
-            ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
-            ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
-            ARM_TENANT_ID: $(TENANT_ID)
-            ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)
+        - group: aviatrix-variables
+      jobs:
+        - job: SpokesDeploymentJob
+          displayName: Spokes Deployment
+          variables:
+            terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure/${{ region.key }}/spokes/${{ region.value }}
+            plan_file: azure_spokes
+            ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+              deploy: ""
+            ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+              deploy: "terraform -chdir=${{ variables.terraform_path }} apply ${{ variables.plan_file }}"
+          steps:
+            - template: ../common.yml
+              parameters:
+                serviceConnectionName: TRAVIS_CONNECTION
+  
+          # - script: |
+          #     terraform -chdir=${{ variables.terraform_path }} init \
+          #     terraform -chdir=${{ variables.terraform_path }} plan -out=${{ variables.plan_file }} \
+          #     ${{ variables.deploy }}
+          #   displayName: Deploy Azure Transits via Terraform
+          #   env:
+          #     ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
+          #     ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+          #     ARM_TENANT_ID: $(TENANT_ID)
+          #     ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)

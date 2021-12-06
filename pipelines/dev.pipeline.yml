@@ -1,0 +1,34 @@
+trigger: none
+pool: ubuntu20-latest
+
+variables:
+  environment: dev
+  serviceConnectionName: TRAVIS_CONNECTION
+
+stages:
+- template: templates/stages/state.setup.yml
+  parameters:
+    environment: ${{ variables.environment }}
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
+
+- template: templates/stages/aviatrix.controller.yml
+  parameters:
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
+    environment: ${{ variables.environment }}
+
+- template: templates/stages/transits.yml
+  parameters:
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
+    environment: ${{ variables.environment }}
+    azureRegions:
+    - east-us-1
+    - south-central-us
+
+- template: templates/stages/spokes.yml
+  parameters:
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
+    environment: ${{ variables.environment }}
+    spokes:
+      azure:
+        south-central-us:
+        - spoke1
