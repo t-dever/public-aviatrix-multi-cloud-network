@@ -23,13 +23,16 @@ stages:
     azureRegions:
     - east-us-1
     - south-central-us
-
 - template: templates/stages/spokes.yml
   parameters:
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
     spokes:
     - csp: azure
+      region: east-us-1
+      spokes:
+      - spoke1
+    - csp: azure
       region: south-central-us
       spokes:
-       - spoke1
+      - spoke1

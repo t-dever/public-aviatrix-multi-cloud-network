@@ -8,7 +8,7 @@ parameters:
 stages:
 - ${{ each region in parameters.spokes }}:
   - ${{ each spoke in region.spokes }}:
-    - stage: ${{ replace(spoke, '-', '_') }}SpokeDeploymentStage
+    - stage: ${{ replace(region.region, '-', '_') }}${{ spoke }}SpokeDeploymentStage
       dependsOn:
        - "${{ replace(region.region, '-', '_') }}${{ region.csp }}TransitsDeploymentStage"
       displayName: Azure ${{ spoke }} Deployment
@@ -19,7 +19,7 @@ stages:
           displayName: Deploy Spoke ${{ spoke }}
           variables:
             terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ region.csp }}/${{ region.region }}/spokes/${{ spoke }}
-            plan_file: azure_spokes
+            plan_file: spokes
             plan: "terragrunt plan -out=${{ variables.plan_file }}"
             ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
               deploy: ""
