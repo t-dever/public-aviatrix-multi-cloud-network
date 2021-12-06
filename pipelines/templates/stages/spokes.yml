@@ -10,7 +10,7 @@ stages:
   - ${{ each spoke in region.spokes }}:
     - stage: ${{ replace(spoke, '-', '_') }}SpokeDeploymentStage
       dependsOn:
-       - ${{ replace(region.region, '-', '_') }}TransitsDeploymentStage
+       - "${{ replace(region.region, '-', '_') }}TransitsDeploymentStage"
       displayName: Azure ${{ spoke.key }} Deployment
       variables:
         - group: aviatrix-variables
