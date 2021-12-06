@@ -13,31 +13,33 @@ stages:
        - "${{ replace(region.region, '-', '_') }}${{ region.csp }}TransitsDeploymentStage"
       displayName: Azure ${{ spoke }} Deployment
       variables:
-        - group: aviatrix-variables
+        - group: ${{ parameters.environment }}-state
       jobs:
-        - job: SpokesDeploymentJob
-          displayName: Spokes Deployment
+        - job: ${{ spoke }}SpokesDeploymentJob
+          displayName: Deploy Spoke ${{ spoke }}
           variables:
-            terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure/${{ spoke.key }}/spokes/${{ spoke.value }}
+            terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ region.csp }}/${{ spoke.key }}/spokes/${{ spoke.value }}
             plan_file: azure_spokes
+            plan: "terragrunt plan -out=${{ variables.plan_file }}"
             ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
               deploy: ""
             ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
-              deploy: "terraform -chdir=${{ variables.terraform_path }} apply ${{ variables.plan_file }}"
+              deploy: "terragrunt apply ${{ variables.plan_file }}"
           steps:
             - template: ../common.yml
               parameters:
                 serviceConnectionName: ${{ parameters.serviceConnectionName }}
-  
-          # - script: |
-          #     terraform -chdir=${{ variables.terraform_path }} init \
-          #     terraform -chdir=${{ variables.terraform_path }} plan -out=${{ variables.plan_file }} \
-          #     ${{ variables.deploy }}
-          #   displayName: Deploy Azure Transits via Terraform
-          #   env:
-              # REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
-              # REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
-          #     ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
-          #     ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
-          #     ARM_TENANT_ID: $(TENANT_ID)
-          #     ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)
+
+            - script: |
+                cd $(terraform_path)
+                terragrunt init
+                ${{ variables.plan }}
+                ${{ variables.deploy }}
+              displayName: Deploy Spoke
+              env:
+                REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
+                REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
+                ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
+                ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+                ARM_TENANT_ID: $(TENANT_ID)
+                ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)
