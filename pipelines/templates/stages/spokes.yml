@@ -15,7 +15,7 @@ stages:
     - stage: ${{ replace(region.region, '-', '_') }}${{ spoke }}SpokeDeploymentStage
       dependsOn:
        - "${{ replace(region.region, '-', '_') }}${{ region.csp }}TransitsDeploymentStage"
-      displayName: Azure ${{ spoke }} Deployment
+      displayName: Azure ${{ region.region }} ${{ spoke }} Deployment
       variables:
         - group: ${{ parameters.environment }}-state
       jobs:

@@ -3,6 +3,16 @@ parameters:
   type: string
 
 steps:
+
+- ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+  - script: |
+      pip install -U -r $(System.DefaultWorkingDirectory)/requirements.txt
+      pre-commit run --all-files
+
 - task: AzureCLI@2
   displayName: Get Service Connection Information
   inputs:
