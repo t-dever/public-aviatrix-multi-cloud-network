@@ -20,9 +20,12 @@ stages:
   parameters:
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
-    azureRegions:
-    - east-us-1
-    - south-central-us
+    transits:
+    - csp: azure
+      region: east-us-1
+    - csp: azure
+      region: south-central-us
+
 - template: templates/stages/spokes.yml
   parameters:
     serviceConnectionName: ${{ variables.serviceConnectionName }}

@@ -7,19 +7,19 @@ parameters:
   type: string
 
 stages:
-- ${{ each region in parameters.azureRegions }}:
-  - stage: ${{ replace(region, '-', '_') }}azureTransitsDeploymentStage
+- ${{ each transit in parameters.transits }}:
+  - stage: ${{ replace(transit.region, '-', '_') }}${{ transit.csp }}TransitsDeploymentStage
     dependsOn: [ ControllerDeploymentStage ]
-    displayName: Azure Hub ${{ region }}
+    displayName: ${{ transit.csp }} hub ${{ transit.region }}
     variables:
       - group: ${{ parameters.environment }}-state
       - group: ${{ parameters.environment }}-controller
     jobs:
-      - job: ${{ replace(region, '-', '_') }}TransitDeploymentJob
-        displayName: Azure Hub ${{ region }}
+      - job: ${{ replace(transit.region, '-', '_') }}TransitDeploymentJob
+        displayName: ${{ transit.csp }} hub ${{ transit.region }}
         variables:
-          terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure/${{ region }}/hub
-          plan_file: azure_hub
+          terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ transit.csp }}/${{ transit.region }}/hub
+          plan_file: hub
           plan: "terragrunt plan -out=${{ variables.plan_file }}"
           ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
             deploy: ""
@@ -35,7 +35,7 @@ stages:
               terragrunt init
               ${{ variables.plan }}
               ${{ variables.deploy }}
-            displayName: Deploy Azure Transits via Terraform
+            displayName: Deploy Transits via Terraform
             env:
               REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
               REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
