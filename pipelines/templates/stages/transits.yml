@@ -8,6 +8,10 @@ parameters:
   type: string
 - name: serviceConnectionName
   type: string
+- name: plan
+  type: boolean
+  default: false
+
 
 stages:
 - ${{ each transit in parameters.transits }}:
@@ -29,7 +33,7 @@ stages:
           ${{ if not(parameters.destroy) }}:
             displayName: "Deploying Transits"
             plan: "terragrunt plan -out=${{ variables.plan_file }}"
-          ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+          ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), parameters.plan) }}:
             deploy: ""
           ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
             deploy: "terragrunt apply ${{ variables.plan_file }}"

@@ -10,6 +10,10 @@ parameters:
   displayName: Destroy Spokes?
   type: boolean
   default: false
+- name: plan
+  displayName: View Change Plan
+  type: boolean
+  default: false
 
 variables:
   environment: dev
