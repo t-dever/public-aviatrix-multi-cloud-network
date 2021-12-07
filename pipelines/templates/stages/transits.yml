@@ -1,4 +1,7 @@
 parameters:
+- name: destroy
+  type: boolean
+  default: false
 - name: transits
   type: object
 - name: environment
@@ -20,7 +23,12 @@ stages:
         variables:
           terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ transit.csp }}/${{ transit.region }}/hub
           plan_file: hub
-          plan: "terragrunt plan -out=${{ variables.plan_file }}"
+          ${{ if parameters.destroy }}:
+            displayName: "Destroying Transits"
+            plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
+          ${{ if not(parameters.destroy) }}:
+            displayName: "Deploying Transits"
+            plan: "terragrunt plan -out=${{ variables.plan_file }}"
           ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
             deploy: ""
           ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
@@ -35,7 +43,7 @@ stages:
               terragrunt init
               ${{ variables.plan }}
               ${{ variables.deploy }}
-            displayName: Deploy Transits via Terraform
+            displayName: ${{ variables.displayName }}
             env:
               REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
               REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)

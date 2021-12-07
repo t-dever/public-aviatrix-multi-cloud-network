@@ -1,10 +1,14 @@
 parameters:
+- name: destroy
+  type: boolean
+  default: false
 - name: spokes
   type: object
 - name: environment
   type: string
 - name: serviceConnectionName
   type: string
+
 stages:
 - ${{ each region in parameters.spokes }}:
   - ${{ each spoke in region.spokes }}:
@@ -20,7 +24,12 @@ stages:
           variables:
             terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ region.csp }}/${{ region.region }}/spokes/${{ spoke }}
             plan_file: spokes
-            plan: "terragrunt plan -out=${{ variables.plan_file }}"
+            ${{ if parameters.destroy }}:
+              displayName: "Destroying Spoke"
+              plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
+            ${{ if not(parameters.destroy) }}:
+              displayName: "Deploying Spoke"
+              plan: "terragrunt plan -out=${{ variables.plan_file }}"
             ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
               deploy: ""
             ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
@@ -35,7 +44,7 @@ stages:
                 terragrunt init
                 ${{ variables.plan }}
                 ${{ variables.deploy }}
-              displayName: Deploy Spoke
+              displayName: ${{ variables.displayName }}
               env:
                 REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
                 REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)

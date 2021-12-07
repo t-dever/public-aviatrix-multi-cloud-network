@@ -1,6 +1,16 @@
 trigger: none
 pool: ubuntu20-latest
 
+parameters:
+- name: destroyTransits
+  displayName: Destroy Transits?
+  type: boolean
+  default: false
+- name: destroySpokes
+  displayName: Destroy Spokes?
+  type: boolean
+  default: false
+
 variables:
   environment: dev
   serviceConnectionName: TRAVIS_CONNECTION
@@ -18,6 +28,7 @@ stages:
 
 - template: templates/stages/transits.yml
   parameters:
+    destroy: ${{ parameters.destroyTransits }}
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
     transits:
@@ -28,6 +39,7 @@ stages:
 
 - template: templates/stages/spokes.yml
   parameters:
+    destroy: ${{ parameters.destroySpokes }}
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
     spokes:
