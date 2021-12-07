@@ -2,6 +2,12 @@
 
 This project is an example of deploying a multi cloud network with aviatrix using reusable modules.
 
+## How to modify code
+
+```text
+pip install -U -r requirements.txt
+```
+
 ## IP Addressing Schema
 
 ### Azure - 10.0.0.0/12 (10.0.0.1 - 10.15.255.254)
