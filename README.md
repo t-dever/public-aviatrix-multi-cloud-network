@@ -4,7 +4,7 @@ This project is an example of deploying a multi cloud network with aviatrix usin
 
 ## How to modify code
 
-```text
+```terminal
 pip install -U -r requirements.txt
 pre-commit install
 ```
