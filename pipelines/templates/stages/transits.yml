@@ -1,5 +1,5 @@
 parameters:
-- name: azureRegions
+- name: transits
   type: object
 - name: environment
   type: string

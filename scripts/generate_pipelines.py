@@ -29,6 +29,7 @@ def update_pipeline(pipeline_file, env, terraform_path, azure_regions=None, aws_
     stream = open(pipeline_file, 'r')
     data = yaml.load(stream)
     for index, stage in enumerate(data['stages']):
+        # Update Transits
         if stage['template'] == "templates/stages/transits.yml":
             combined_transits = []
             if azure_regions:
@@ -39,9 +40,11 @@ def update_pipeline(pipeline_file, env, terraform_path, azure_regions=None, aws_
                             'region': region
                         })
             stage['parameters']['transits'] = combined_transits
+        # Update Spokes
         if stage['template'] == "templates/stages/spokes.yml":
             data['stages'][index].yaml_set_start_comment('\n')
             combined_spokes = []
+            # Update Azure Spokes
             if azure_regions:
                 for region in azure_regions:
                     spoke_path = f"{terraform_path}/azure/{region}/spokes"
