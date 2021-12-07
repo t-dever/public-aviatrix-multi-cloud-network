@@ -35,7 +35,7 @@ stages:
             plan: "terragrunt plan -out=${{ variables.plan_file }}"
           ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), parameters.plan) }}:
             deploy: ""
-          ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+          ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan)) }}:
             deploy: "terragrunt apply ${{ variables.plan_file }}"
         steps:
           - template: ../common.yml
