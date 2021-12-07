@@ -3,6 +3,7 @@ repos:
     hooks:
       - id: generate_pipeline
         name: generate_pipeline
+        description: Generates the yaml pipelines for transits and spokes
         entry: python scripts/generate_pipelines.py
         language: system
         always_run: true

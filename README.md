@@ -6,6 +6,7 @@ This project is an example of deploying a multi cloud network with aviatrix usin
 
 ```text
 pip install -U -r requirements.txt
+pre-commit install
 ```
 
 ## IP Addressing Schema
