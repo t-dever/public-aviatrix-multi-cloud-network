@@ -14,6 +14,10 @@ dependency "state" {
   config_path = "../state"
 }
 
+# dependencies {
+#   paths = ["../state"]
+# }
+
 inputs = {
   location                           = "South Central US"
   resource_prefix                    = "travis-ussc-controller"
