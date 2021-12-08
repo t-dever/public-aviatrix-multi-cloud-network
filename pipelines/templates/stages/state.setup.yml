@@ -3,6 +3,12 @@ parameters:
   type: string
 - name: serviceConnectionName
   type: string
+- name: destroy
+  type: boolean
+  default: false
+- name: plan
+  type: boolean
+  default: false
 
 stages:
 - stage: StateDeploymentStage
@@ -15,17 +21,24 @@ stages:
       variables:
         terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/management/state
         plan_file: state_setup
-        plan: "terragrunt plan -out=${{ variables.plan_file }}"
-        ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+        ${{ if parameters.destroy }}:
+          displayName: "Destroying State"
+          plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
+          deploy: "terragrunt apply ${{ variables.plan_file }}"
+        ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), parameters.plan) }}:
+          displayName: "Planning State"
+          plan: "terragrunt plan -out=${{ variables.plan_file }}"
           deploy: ""
-        ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+        ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan), not(parameters.destroy)) }}:
+          displayName: "Deploying State"
+          plan: "terragrunt plan -out=${{ variables.plan_file }}"
           deploy: "terragrunt apply ${{ variables.plan_file }}"
       steps:
         - template: ../common.yml
           parameters:
             serviceConnectionName: ${{ parameters.serviceConnectionName }}
 
-        - ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+        - ${{ if or(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan), not(parameters.destroy) }}:
           - task: AzureCLI@2
             displayName: Create Resource Group, Storage Account and Container
             inputs:
@@ -61,7 +74,7 @@ stages:
             terragrunt init
             ${{ variables.plan }}
             ${{ variables.deploy }}
-          displayName: Deploy State Resources via Terraform
+          displayName: ${{ variables.displayName }}
           env:
             REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
             REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)

@@ -3,7 +3,7 @@ include "root" {
 }
 
 terraform {
-  source = "${local.base_source_url}?ref=features/updateInitialConfig"
+  source = "${local.base_source_url}?ref=main"
 }
 
 locals {
