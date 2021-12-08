@@ -26,7 +26,7 @@ dependency "hub" {
 }
 
 dependencies {
-  ["../../hub"]
+  paths = ["../../hub"]
 }
 
 inputs = {
