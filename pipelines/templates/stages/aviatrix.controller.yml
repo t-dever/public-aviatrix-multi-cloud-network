@@ -44,7 +44,7 @@ stages:
             terragrunt init
             ${{ variables.plan }}
             ${{ variables.deploy }}
-          displayName: Deploy Controller via Terraform
+          displayName: ${{ variables.displayName }}
           env:
             REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
             REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
