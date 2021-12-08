@@ -30,14 +30,15 @@ stages:
           ${{ if parameters.destroy }}:
             displayName: "Destroying Transits"
             plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
-          ${{ if not(parameters.destroy) }}:
-            plan: "terragrunt plan -out=${{ variables.plan_file }}"
-          ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), parameters.plan) }}:
-            deploy: ""
-            displayName: "Planning Transits"
-          ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan), not(parameters.destroy)) }}:
             deploy: "terragrunt apply ${{ variables.plan_file }}"
+          ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), parameters.plan) }}:
+            displayName: "Planning Transits"
+            plan: "terragrunt plan -out=${{ variables.plan_file }}"
+            deploy: ""
+          ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan), not(parameters.destroy)) }}:
             displayName: "Deploying Transits"
+            plan: "terragrunt plan -out=${{ variables.plan_file }}"
+            deploy: "terragrunt apply ${{ variables.plan_file }}"
 
         steps:
           - template: ../common.yml
