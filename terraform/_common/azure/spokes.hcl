@@ -15,30 +15,15 @@ locals {
 
 dependency "state" {
   config_path = "../../../../management/state"
-  # mock_outputs = {
-  #   key_vault_id = "test_id"
-  # }
 }
 
 dependency "controller" {
   config_path = "../../../../management/controller"
-  # mock_outputs = {
-  #   controller_public_ip = "1.1.1.1"
-  #   controller_admin_password = "testing"
-  #   aviatrix_azure_account = "test-account"
-  # }
 }
 
 dependency "hub" {
   config_path = "../../hub"
-  # mock_outputs = {
-  #   transit_gateway_name = "transit_gateway_name"
-  # }
 }
-
-# dependencies {
-#   paths = ["../../../management/controller", "../../../management/state", "../../hub"]
-# }
 
 inputs = {
   location               = local.region_vars.locals.region,

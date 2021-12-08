@@ -16,26 +16,12 @@ locals {
 
 dependency "controller" {
   config_path = "../../../management/controller"
-  # mock_outputs = {
-  #   controller_public_ip = "1.1.1.1"
-  #   controller_admin_password = "testing"
-  #   aviatrix_azure_account = "test-account"
-  #   user_public_ip_address = "1.1.1.1"
-  # }
-  # mock_outputs_allowed_terraform_commands = ["init"]
 }
 
 dependency "state" {
   config_path = "../../../management/state"
-  # mock_outputs = {
-  #   key_vault_id = "test_id"
-  # }
-  # mock_outputs_allowed_terraform_commands = ["init"]
 }
 
-# dependencies {
-#   paths = ["../../../management/controller", "../../../management/state"]
-# }
 
 inputs = {
   location                  = local.region_vars.locals.region,
