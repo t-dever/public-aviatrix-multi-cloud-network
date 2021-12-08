@@ -26,10 +26,10 @@ stages:
           displayName: "Destroying Controller"
           plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
         ${{ if not(parameters.destroy) }}:
-          displayName: "Planning Controller"
           plan: "terragrunt plan -out=${{ variables.plan_file }}"
         ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), parameters.plan) }}:
           deploy: ""
+          displayName: "Planning Controller"
         ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan)) }}:
           deploy: "terragrunt apply ${{ variables.plan_file }}"
           displayName: "Deploying Controller"
