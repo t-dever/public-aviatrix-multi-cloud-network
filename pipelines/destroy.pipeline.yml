@@ -12,7 +12,7 @@ variables:
   value: TRAVIS_CONNECTION
 
 steps:
-- template: ../common.yml
+- template: templates/common.yml
   parameters:
     serviceConnectionName: ${{ variables.serviceConnectionName }}
 
