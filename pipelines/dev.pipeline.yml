@@ -2,14 +2,14 @@ trigger: none
 pool: ubuntu20-latest
 
 parameters:
-- name: destroy
-  displayName: Run Terraform Destroy?
-  type: boolean
-  default: false
-- name: plan
-  displayName: Run Terraform Plan
-  type: boolean
-  default: false
+- name: action
+  displayName: Run Terraform Operations
+  type: string
+  default: plan
+  values:
+  - plan
+  - destroy
+  - apply
 
 variables:
   environment: dev
@@ -18,20 +18,19 @@ variables:
 stages:
 - template: templates/stages/state.setup.yml
   parameters:
+    action: ${{ parameters.action }}
     environment: ${{ variables.environment }}
     serviceConnectionName: ${{ variables.serviceConnectionName }}
 
 - template: templates/stages/aviatrix.controller.yml
   parameters:
-    plan: ${{ parameters.plan }}
-    destroy: ${{ parameters.destroy }}
+    action: ${{ parameters.action }}
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
 
 - template: templates/stages/transits.yml
   parameters:
-    plan: ${{ parameters.plan }}
-    destroy: ${{ parameters.destroy }}
+    action: ${{ parameters.action }}
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
     transits:
@@ -42,7 +41,7 @@ stages:
 
 - template: templates/stages/spokes.yml
   parameters:
-    destroy: ${{ parameters.destroy }}
+    action: ${{ parameters.action }}
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
     spokes:

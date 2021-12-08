@@ -3,12 +3,9 @@ parameters:
   type: string
 - name: serviceConnectionName
   type: string
-- name: destroy
-  type: boolean
-  default: false
-- name: plan
-  type: boolean
-  default: false
+- name: action
+  type: string
+  default: plan
 
 stages:
 - stage: StateDeploymentStage
@@ -21,15 +18,15 @@ stages:
       variables:
         terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/management/state
         plan_file: state_setup
-        ${{ if parameters.destroy }}:
+        ${{ if eq(parameters.action, 'destroy') }}:
           displayName: "Destroying State"
           plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
           deploy: "terragrunt apply ${{ variables.plan_file }}"
-        ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), parameters.plan) }}:
+        ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), eq(parameters.action, 'plan')) }}:
           displayName: "Planning State"
           plan: "terragrunt plan -out=${{ variables.plan_file }}"
           deploy: ""
-        ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan), not(parameters.destroy)) }}:
+        ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.action, 'apply')) }}:
           displayName: "Deploying State"
           plan: "terragrunt plan -out=${{ variables.plan_file }}"
           deploy: "terragrunt apply ${{ variables.plan_file }}"
@@ -38,7 +35,7 @@ stages:
           parameters:
             serviceConnectionName: ${{ parameters.serviceConnectionName }}
 
-        - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan), not(parameters.destroy)) }}:
+        - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.action, 'apply')) }}:
           - task: AzureCLI@2
             displayName: Create Resource Group, Storage Account and Container
             inputs:

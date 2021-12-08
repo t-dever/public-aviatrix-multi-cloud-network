@@ -1,13 +1,13 @@
 parameters:
-- name: destroy
-  type: boolean
-  default: false
 - name: spokes
   type: object
 - name: environment
   type: string
 - name: serviceConnectionName
   type: string
+- name: action
+  type: string
+  default: plan
 
 stages:
 - ${{ each region in parameters.spokes }}:
@@ -24,15 +24,15 @@ stages:
           variables:
             terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ region.csp }}/${{ region.region }}/spokes/${{ spoke }}
             plan_file: spokes
-            ${{ if parameters.destroy }}:
+            ${{ if eq(parameters.action, 'destroy') }}:
               displayName: "Destroying Spoke"
               plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
               deploy: "terragrunt apply ${{ variables.plan_file }}"
-            ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), parameters.plan) }}:
+            ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), eq(parameters.action, 'plan')) }}:
               displayName: "Planning Spoke"
               plan: "terragrunt plan -out=${{ variables.plan_file }}"
               deploy: ""
-            ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan), not(parameters.destroy)) }}:
+            ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.action, 'apply')) }}:
               displayName: "Deploying Spoke"
               plan: "terragrunt plan -out=${{ variables.plan_file }}"
               deploy: "terragrunt apply ${{ variables.plan_file }}"
