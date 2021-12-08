@@ -2,6 +2,10 @@ trigger: none
 pool: ubuntu20-latest
 
 parameters:
+- name: destroyController
+  displayName: Destroy Controller?
+  type: boolean
+  default: false
 - name: destroyTransits
   displayName: Destroy Transits?
   type: boolean
