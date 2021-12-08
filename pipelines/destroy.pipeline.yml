@@ -14,7 +14,7 @@ variables:
 steps:
 - template: ../common.yml
   parameters:
-    serviceConnectionName: ${{ parameters.serviceConnectionName }}
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
 
 - script: |
     cd $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure
