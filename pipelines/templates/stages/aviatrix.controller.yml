@@ -30,7 +30,7 @@ stages:
         ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), parameters.plan) }}:
           deploy: ""
           displayName: "Planning Controller"
-        ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan)) }}:
+        ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan), not(parameters.destroy)) }}:
           deploy: "terragrunt apply ${{ variables.plan_file }}"
           displayName: "Deploying Controller"
 
