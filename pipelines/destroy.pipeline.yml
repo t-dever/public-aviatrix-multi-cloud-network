@@ -5,6 +5,10 @@ parameters:
 - name: environment
   type: string
   default: dev
+- name: csp
+  type: string
+  values:
+    - azure
 
 variables:
 - group: ${{ parameters.environment }}-state
@@ -17,7 +21,7 @@ steps:
     serviceConnectionName: ${{ variables.serviceConnectionName }}
 
 - script: |
-    cd $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure
+    cd $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ parameters.csp }}
     terragrunt run-all init --terragrunt-non-interactive
     terragrunt run-all plan -out=destroy_plan -destroy --terragrunt-non-interactive
     terragrunt run-all apply destroy_plan --terragrunt-non-interactive

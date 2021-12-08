@@ -25,6 +25,10 @@ dependency "hub" {
   config_path = "../../hub"
 }
 
+dependencies {
+  ["../../hub"]
+}
+
 inputs = {
   location               = local.region_vars.locals.region,
   controller_public_ip   = dependency.controller.outputs.controller_public_ip
