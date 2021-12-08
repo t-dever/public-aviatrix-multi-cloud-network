@@ -3,6 +3,12 @@ parameters:
   type: string
 - name: serviceConnectionName
   type: string
+- name: destroy
+  type: boolean
+  default: false
+- name: plan
+  type: boolean
+  default: false
 
 stages:
 - stage: ControllerDeploymentStage
@@ -16,11 +22,18 @@ stages:
       variables:
         terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/management/controller
         plan_file: controller
-        plan: "terragrunt plan -out=${{ variables.plan_file }}"
-        ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+        ${{ if parameters.destroy }}:
+          displayName: "Destroying Controller"
+          plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
+        ${{ if not(parameters.destroy) }}:
+            plan: "terragrunt plan -out=${{ variables.plan_file }}"
+        ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), parameters.plan) }}:
           deploy: ""
-        ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
+          displayName: "Planning Controller"
+        ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan)) }}:
           deploy: "terragrunt apply ${{ variables.plan_file }}"
+          displayName: "Deploying Controller"
+
       steps:
         - template: ../common.yml
           parameters:

@@ -31,12 +31,14 @@ stages:
             displayName: "Destroying Transits"
             plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
           ${{ if not(parameters.destroy) }}:
-            displayName: "Deploying Transits"
             plan: "terragrunt plan -out=${{ variables.plan_file }}"
           ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), parameters.plan) }}:
             deploy: ""
+            displayName: "Planning Transits"
           ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), not(parameters.plan)) }}:
             deploy: "terragrunt apply ${{ variables.plan_file }}"
+            displayName: "Deploying Transits"
+
         steps:
           - template: ../common.yml
             parameters:
