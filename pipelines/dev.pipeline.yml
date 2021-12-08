@@ -2,16 +2,8 @@ trigger: none
 pool: ubuntu20-latest
 
 parameters:
-- name: destroyController
-  displayName: Destroy Controller?
-  type: boolean
-  default: false
-- name: destroyTransits
-  displayName: Destroy Transits?
-  type: boolean
-  default: false
-- name: destroySpokes
-  displayName: Destroy Spokes?
+- name: destroy
+  displayName: Run Terraform Destroy?
   type: boolean
   default: false
 - name: plan
@@ -32,14 +24,14 @@ stages:
 - template: templates/stages/aviatrix.controller.yml
   parameters:
     plan: ${{ parameters.plan }}
-    destroy: ${{ parameters.destroyController }}
+    destroy: ${{ parameters.destroy }}
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
 
 - template: templates/stages/transits.yml
   parameters:
     plan: ${{ parameters.plan }}
-    destroy: ${{ parameters.destroyTransits }}
+    destroy: ${{ parameters.destroy }}
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
     transits:
@@ -50,7 +42,7 @@ stages:
 
 - template: templates/stages/spokes.yml
   parameters:
-    destroy: ${{ parameters.destroySpokes }}
+    destroy: ${{ parameters.destroy }}
     serviceConnectionName: ${{ variables.serviceConnectionName }}
     environment: ${{ variables.environment }}
     spokes:

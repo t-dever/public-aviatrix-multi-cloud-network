@@ -1,0 +1,31 @@
+trigger: none
+pool: ubuntu20-latest
+
+parameters:
+- name: environment
+  type: string
+  default: dev
+
+variables:
+- group: ${{ parameters.environment }}-state
+- name: serviceConnectionName
+  value: TRAVIS_CONNECTION
+
+steps:
+- template: ../common.yml
+  parameters:
+    serviceConnectionName: ${{ parameters.serviceConnectionName }}
+
+- script: |
+    cd $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/azure
+    terragrunt run-all init
+    terragrunt run-all plan -destroy -out=destroy_plan
+    terragrunt run-all apply destroy_plan
+  displayName: Destroy ${{ parameters.environment }}
+  env:
+    REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
+    REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
+    ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
+    ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+    ARM_TENANT_ID: $(TENANT_ID)
+    ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)
