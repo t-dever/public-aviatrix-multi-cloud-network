@@ -20,7 +20,6 @@ steps:
   parameters:
     serviceConnectionName: ${{ variables.serviceConnectionName }}
 
-# terragrunt run-all plan -destroy -out=destroy_plan --terragrunt-non-interactive
 - script: |
     cd $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ parameters.csp }}
     terragrunt run-all destroy --terragrunt-non-interactive
