@@ -2,12 +2,14 @@ import os
 from ruamel.yaml import YAML, comments
 from os.path import isfile, realpath, isdir
 from io import StringIO
+from copy import deepcopy
 
 root_path = os.path.dirname(realpath(__name__))
 
 environments = ['dev', 'lab']
 yaml=YAML()
 yaml.indent(mapping=2, sequence=2, offset=0)
+# yaml.representer.ignore_aliases = lambda *data: True
 
 def object_to_yaml_str(obj, options=None):
     if options == None: options = {}
@@ -57,9 +59,11 @@ def update_pipeline(pipeline_file, env, terraform_path, azure_regions=None, aws_
                         spokes = os.listdir(spoke_path)
                         for spoke in spokes:
                             spoke_params['spokes'].append(spoke)
-                            combined_spokes.append(spoke_params)
+                        combined_spokes.append(spoke_params)
             stage['parameters']['spokes'] = combined_spokes
     data = object_to_yaml_str(data)
+
+    # Write transit and spoke data to pipeline file
     with open(pipeline_file, 'w') as f:
         f.write(data)
         f.close()
