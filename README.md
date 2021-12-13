@@ -9,6 +9,13 @@ pip install -U -r requirements.txt
 pre-commit install
 ```
 
+If checkov pre-check is NOT working with python pre-commit check then run from docker container in powershell.
+
+```powershell
+cd public-aviatrix-multi-cloud-network
+docker run -v ${pwd}:/lint -w /lint ghcr.io/antonbabenko/pre-commit-terraform:latest run -a
+```
+
 ## IP Addressing Schema
 
 ### Azure - 10.0.0.0/12 (10.0.0.1 - 10.15.255.254)
@@ -50,3 +57,5 @@ pre-commit install
   - Hub VPC - 10.32.0.0/23
   - Spoke1 - 10.32.2.0/23
 ```
+
+

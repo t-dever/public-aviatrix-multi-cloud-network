@@ -10,8 +10,8 @@ steps:
       versionSpec: '3.x'
       addToPath: true
   - script: |
-      pip install -U -r $(System.DefaultWorkingDirectory)/requirements.txt
-      pre-commit run --all-files
+      docker run -v $(pwd):/lint -w /lint ghcr.io/antonbabenko/pre-commit-terraform:latest run -a
+    displayName: Perform Pre-Commit Checks
 
 - task: AzureCLI@2
   displayName: Get Service Connection Information

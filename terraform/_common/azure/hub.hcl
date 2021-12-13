@@ -3,15 +3,15 @@ terraform {
 }
 
 locals {
-  base_source_url = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/hub"
-  env = local.environment_vars.locals.environment
+  base_source_url  = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/hub"
+  env              = local.environment_vars.locals.environment
   environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
   # region_path: Separates directory into an array/list
   region_path = split("/", get_terragrunt_dir())
   # region: This will take the region path to get the directory name for the region.
-  region = element(local.region_path, length(local.region_path)-2)
+  region = element(local.region_path, length(local.region_path) - 2)
   # region_vars: Reads the _common regions variables so they don't have to be duplicated.
-  region_vars = read_terragrunt_config("${dirname(find_in_parent_folders())}/_common/azure/regions/${local.region}.hcl") 
+  region_vars = read_terragrunt_config("${dirname(find_in_parent_folders())}/_common/azure/regions/${local.region}.hcl")
 }
 
 dependency "controller" {

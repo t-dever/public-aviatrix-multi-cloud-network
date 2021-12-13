@@ -12,6 +12,7 @@ parameters:
 
 variables:
 - group: ${{ parameters.environment }}-state
+- group: ${{ parameters.environment }}-controller
 - name: serviceConnectionName
   value: TRAVIS_CONNECTION
 
@@ -20,6 +21,13 @@ steps:
   parameters:
     serviceConnectionName: ${{ variables.serviceConnectionName }}
 
+- task: AzureKeyVault@2
+  inputs:
+    connectedServiceName: ${{ parameters.serviceConnectionName }}
+    keyVaultName: $(keyVaultName)
+    secretsFilter: 'controller-public-ip,controller-admin-pw'
+  displayName: Get Controller Secrets
+
 - script: |
     cd $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ parameters.csp }}
     terragrunt run-all destroy --terragrunt-non-interactive
@@ -27,6 +35,9 @@ steps:
   env:
     REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
     REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
+    AVIATRIX_CONTROLLER_IP: $(controller-public-ip)
+    AVIATRIX_USERNAME: $(aviatrixControllerUsername)
+    AVIATRIX_PASSWORD: $(controller-admin-pw)
     ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
     ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
     ARM_TENANT_ID: $(TENANT_ID)

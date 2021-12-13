@@ -2,11 +2,11 @@
 remote_state {
   backend = "azurerm"
   config = {
-      resource_group_name  = get_env("REMOTE_STATE_RESOURCE_GROUP")
-      storage_account_name = get_env("REMOTE_STATE_STORAGE_ACCOUNT")
-      container_name       = "tfstate"
-      key                  = "${path_relative_to_include()}.terraform.tfstate"
-      use_azuread_auth     = true
+    resource_group_name  = get_env("REMOTE_STATE_RESOURCE_GROUP")
+    storage_account_name = get_env("REMOTE_STATE_STORAGE_ACCOUNT")
+    container_name       = "tfstate"
+    key                  = "${path_relative_to_include()}.terraform.tfstate"
+    use_azuread_auth     = true
   }
 }
 
