@@ -23,7 +23,7 @@ steps:
 
 - task: AzureKeyVault@2
   inputs:
-    connectedServiceName: ${{ parameters.serviceConnectionName }}
+    connectedServiceName: ${{ variables.serviceConnectionName }}
     keyVaultName: $(keyVaultName)
     secretsFilter: 'controller-public-ip,controller-admin-pw'
   displayName: Get Controller Secrets
