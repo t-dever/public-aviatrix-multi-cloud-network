@@ -28,6 +28,9 @@ pre-commit install
     - spoke1: 10.1.2.0/23
       gateway_subnet: 10.1.2.0/24
       virtual_machines: 10.1.3.0/24
+    - spoke2: 10.1.4.0/23
+      gateway_subnet: 10.1.4.0/24
+      virtual_machines: 10.1.5.0/24
 ```
 
 ### GCP - 10.16.0.0/12 (10.16.0.1 - 10.31.255.254)
