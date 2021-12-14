@@ -50,6 +50,7 @@ stages:
       spokes:
       - spoke1
       - spoke2
+      - spoke3
     - csp: azure
       region: south-central-us
       spokes:
