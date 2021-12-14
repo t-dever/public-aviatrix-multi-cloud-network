@@ -55,3 +55,4 @@ stages:
       region: south-central-us
       spokes:
       - spoke1
+      - spoke2
