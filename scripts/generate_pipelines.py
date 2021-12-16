@@ -1,6 +1,6 @@
 import os
 from ruamel.yaml import YAML, comments
-from os.path import isfile, realpath, isdir
+from os.path import isfile, realpath, isdir, exists
 from io import StringIO
 from copy import deepcopy
 
@@ -58,7 +58,8 @@ def update_pipeline(pipeline_file, env, terraform_path, azure_regions=None, aws_
                         }
                         spokes = os.listdir(spoke_path)
                         for spoke in spokes:
-                            spoke_params['spokes'].append(spoke)
+                            if exists(f"{spoke_path}/{spoke}/terragrunt.hcl"):
+                                spoke_params['spokes'].append(spoke)
                         combined_spokes.append(spoke_params)
             stage['parameters']['spokes'] = combined_spokes
     data = object_to_yaml_str(data)
