@@ -61,11 +61,11 @@ stages:
                   --assignee-principal-type ServicePrincipal \
                   --assignee-object-id $(SERVICE_PRINCIPAL_OBJECT_ID) \
                   --subscription $(SUBSCRIPTION_ID)
-                az storage container create \
-                  --name $(stateStorageContainerName) \
-                  --account-name $(stateStorageAccountName) \
-                  --auth-mode login \
-                  --public-access off
+                # az storage container create \
+                #   --name $(stateStorageContainerName) \
+                #   --account-name $(stateStorageAccountName) \
+                #   --auth-mode login \
+                #   --public-access off
 
         - script: |
             cd $(terraform_path)
