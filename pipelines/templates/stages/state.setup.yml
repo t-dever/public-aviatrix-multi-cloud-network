@@ -12,6 +12,7 @@ stages:
   displayName: Initial Deployment
   variables:
     - group: ${{ parameters.environment }}-state
+    - group: ${{ parameters.environment }}-controller
   jobs:
     - job: StateDeploymentJob
       displayName: Initial Deployment
@@ -75,6 +76,7 @@ stages:
           env:
             REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
             REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
+            USER_PUBLIC_IP_ADDRESS: $(userPublicIpAddress)
             USER_PRINCIPAL_ID: $(userPrincipalObjectId)
             ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
             ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
