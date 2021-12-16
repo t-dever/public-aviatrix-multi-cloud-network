@@ -19,4 +19,5 @@ inputs = {
   azure_application_id              = get_env("ARM_CLIENT_ID")
   azure_application_key             = get_env("ARM_CLIENT_SECRET")
   controller_user_public_ip_address = get_env("USER_PUBLIC_IP_ADDRESS")
+  build_agent_ip_address            = get_env("BUILD_AGENT_PUBLIC_IP_ADDRESS")
 }
