@@ -46,7 +46,7 @@ stages:
               inlineScript: |
                 az group create --location $(stateLocation) --name $(stateResourceGroupName)
                 az storage account create \
-                  --name $(storageAccountName) \
+                  --name $(stateStorageAccountName) \
                   --resource-group $(stateResourceGroupName) \
                   --https-only true \
                   --location $(stateLocation) \
