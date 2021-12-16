@@ -1,5 +1,5 @@
 terraform {
-  source = "${local.base_source_url}?ref=v1.1.0"
+  source = "${local.base_source_url}?ref=hotfix/stateConfig"
 }
 
 locals {
