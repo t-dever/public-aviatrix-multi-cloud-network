@@ -1,6 +1,6 @@
 # This specifies the default tag/reference for the spoke module
 terraform {
-  source = "${local.base_source_url}?ref=v1.1.0"
+  source = "${local.base_source_url}?ref=v1.1.1"
 }
 
 # These are the spoke level variables
