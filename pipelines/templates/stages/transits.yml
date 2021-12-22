@@ -1,35 +1,66 @@
-stages:
-- stage: TransitsDeploymentStage
-  displayName: Transits Deployment
-  variables:
-    - group: aviatrix-variables
-  jobs:
-    - job: TransitDeploymentJob
-      displayName: Transits Deployment
-      variables:
-        terraform_path: terraform/network/azure/hubs
-        plan_file: azure_hub
-        ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
-          deploy: ""
-        ${{ if ne(variables['Build.Reason'], 'PullRequest' ) }}:
-          deploy: "terraform -chdir=${{ variables.terraform_path }} apply ${{ variables.plan_file }}"
-      steps:
-        - template: ../common.yml
-          parameters:
-            serviceConnectionName: TRAVIS_CONNECTION
+parameters:
+- name: transits
+  type: object
+- name: environment
+  type: string
+- name: serviceConnectionName
+  type: string
+- name: action
+  type: string
+  default: plan
 
-        - script: |
-            terraform -chdir=${{ variables.terraform_path }} init \
-              -backend-config="storage_account_name=$(storageAccountName)" \
-              -backend-config="container_name=$(storageContainerName)" \
-              -backend-config="subscription_id=$(SUBSCRIPTION_ID)" \
-              -backend-config="tenant_id=$(TENANT_ID)"
-            terraform -chdir=${{ variables.terraform_path }} plan -out=${{ variables.plan_file }} \
-              -var 'state_storage_account_name=$(storageAccountName)'
-            ${{ variables.deploy }}
-          displayName: Deploy Azure Transits via Terraform
-          env:
-            ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
-            ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
-            ARM_TENANT_ID: $(TENANT_ID)
-            ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)
+stages:
+- ${{ each transit in parameters.transits }}:
+  - stage: ${{ replace(transit.region, '-', '_') }}${{ transit.csp }}TransitsDeploymentStage
+    dependsOn: [ ControllerDeploymentStage ]
+    displayName: ${{ transit.csp }} hub ${{ transit.region }}
+    variables:
+      - group: ${{ parameters.environment }}-state
+      - group: ${{ parameters.environment }}-controller
+    jobs:
+      - job: ${{ replace(transit.region, '-', '_') }}TransitDeploymentJob
+        displayName: ${{ transit.csp }} hub ${{ transit.region }}
+        variables:
+          terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ transit.csp }}/${{ transit.region }}/hub
+          plan_file: hub
+          ${{ if eq(parameters.action, 'destroy') }}:
+            displayName: "Destroying Transits"
+            plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
+            deploy: "terragrunt apply ${{ variables.plan_file }}"
+          ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), eq(parameters.action, 'plan')) }}:
+            displayName: "Planning Transits"
+            plan: "terragrunt plan -out=${{ variables.plan_file }}"
+            deploy: ""
+          ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.action, 'apply')) }}:
+            displayName: "Deploying Transits"
+            plan: "terragrunt plan -out=${{ variables.plan_file }}"
+            deploy: "terragrunt apply ${{ variables.plan_file }}"
+
+        steps:
+          - template: ../common.yml
+            parameters:
+              serviceConnectionName: ${{ parameters.serviceConnectionName }}
+
+          - task: AzureKeyVault@2
+            inputs:
+              connectedServiceName: ${{ parameters.serviceConnectionName }}
+              keyVaultName: $(keyVaultName)
+              secretsFilter: 'controller-public-ip,controller-admin-pw'
+            displayName: Get Controller Secrets
+
+          - script: |
+              cd $(terraform_path)
+              terragrunt init
+              ${{ variables.plan }}
+              ${{ variables.deploy }}
+            displayName: ${{ variables.displayName }}
+            env:
+              REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
+              REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
+              AVIATRIX_CONTROLLER_IP: $(controller-public-ip)
+              AVIATRIX_USERNAME: $(aviatrixControllerUsername)
+              AVIATRIX_PASSWORD: $(controller-admin-pw)
+              ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
+              ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(TENANT_ID)
+              ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)

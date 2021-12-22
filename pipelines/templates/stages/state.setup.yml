@@ -1,0 +1,85 @@
+parameters:
+- name: environment
+  type: string
+- name: serviceConnectionName
+  type: string
+- name: action
+  type: string
+  default: plan
+
+stages:
+- stage: StateDeploymentStage
+  displayName: Initial Deployment
+  variables:
+    - group: ${{ parameters.environment }}-state
+    - group: ${{ parameters.environment }}-controller
+  jobs:
+    - job: StateDeploymentJob
+      displayName: Initial Deployment
+      variables:
+        terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/management/state
+        plan_file: state_setup
+        ${{ if eq(parameters.action, 'destroy') }}:
+          displayName: "Destroying State"
+          plan: "terragrunt plan -out=${{ variables.plan_file }} -destroy"
+          deploy: "terragrunt apply ${{ variables.plan_file }}"
+        ${{ if or(eq(variables['Build.Reason'], 'PullRequest' ), eq(parameters.action, 'plan')) }}:
+          displayName: "Planning State"
+          plan: "terragrunt plan -out=${{ variables.plan_file }}"
+          deploy: ""
+        ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.action, 'apply')) }}:
+          displayName: "Deploying State"
+          plan: "terragrunt plan -out=${{ variables.plan_file }}"
+          deploy: "terragrunt apply ${{ variables.plan_file }}"
+      steps:
+        - template: ../common.yml
+          parameters:
+            serviceConnectionName: ${{ parameters.serviceConnectionName }}
+
+        - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.action, 'apply')) }}:
+          - task: AzureCLI@2
+            displayName: Create Resource Group, Storage Account and Container
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnectionName }}
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az group create --location $(stateLocation) --name $(stateResourceGroupName)
+                az storage account create \
+                  --name $(stateStorageAccountName) \
+                  --resource-group $(stateResourceGroupName) \
+                  --https-only true \
+                  --location $(stateLocation) \
+                  --sku Standard_GRS \
+                  --kind StorageV2 \
+                  --allow-blob-public-access false \
+                  --allow-shared-key-access false \
+                  --min-tls-version TLS1_2
+                az role assignment create \
+                  --role "Storage Blob Data Owner" \
+                  --scope "/subscriptions/$(SUBSCRIPTION_ID)/resourceGroups/$(stateResourceGroupName)/providers/Microsoft.Storage/storageAccounts/$(stateStorageAccountName)" \
+                  --assignee-principal-type ServicePrincipal \
+                  --assignee-object-id $(SERVICE_PRINCIPAL_OBJECT_ID) \
+                  --subscription $(SUBSCRIPTION_ID)
+                az storage container create \
+                  --name $(stateStorageContainerName) \
+                  --account-name $(stateStorageAccountName) \
+                  --auth-mode login \
+                  --public-access off
+
+        - script: |
+            cd $(terraform_path)
+            terragrunt init
+            ${{ variables.plan }}
+            ${{ variables.deploy }}
+          displayName: ${{ variables.displayName }}
+          env:
+            REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
+            REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
+            USER_PUBLIC_IP_ADDRESS: $(userPublicIpAddress)
+            BUILD_AGENT_PUBLIC_IP_ADDRESS: $(buildAgentPublicIpAddress)
+            USER_PRINCIPAL_ID: $(userPrincipalObjectId)
+            ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
+            ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+            ARM_TENANT_ID: $(TENANT_ID)
+            ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)

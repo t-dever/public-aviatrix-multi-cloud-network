@@ -2,6 +2,25 @@
 
 This project is an example of deploying a multi cloud network with aviatrix using reusable modules.
 
+## How to modify code
+
+```terminal
+pip install -U -r requirements.txt
+pre-commit install
+```
+
+If checkov pre-check is NOT working with python pre-commit check then run from docker container in powershell.
+
+```powershell
+cd public-aviatrix-multi-cloud-network
+docker run -v ${pwd}:/lint -w /lint ghcr.io/antonbabenko/pre-commit-terraform:latest run -a
+```
+
+## Custom Build Agents
+
+If you wish to run your terraform on custom build agents the repo below is a good starting point for deploying your own.
+https://github.com/t-dever/azure-devops-build-agents
+
 ## IP Addressing Schema
 
 ### Azure - 10.0.0.0/12 (10.0.0.1 - 10.15.255.254)
@@ -21,6 +40,9 @@ This project is an example of deploying a multi cloud network with aviatrix usin
     - spoke1: 10.1.2.0/23
       gateway_subnet: 10.1.2.0/24
       virtual_machines: 10.1.3.0/24
+    - spoke2: 10.1.4.0/23
+      gateway_subnet: 10.1.4.0/24
+      virtual_machines: 10.1.5.0/24
 ```
 
 ### GCP - 10.16.0.0/12 (10.16.0.1 - 10.31.255.254)
@@ -40,3 +62,5 @@ This project is an example of deploying a multi cloud network with aviatrix usin
   - Hub VPC - 10.32.0.0/23
   - Spoke1 - 10.32.2.0/23
 ```
+
+

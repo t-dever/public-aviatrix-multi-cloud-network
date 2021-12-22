@@ -1,0 +1,56 @@
+trigger: none
+pool: ubuntu20-latest
+
+parameters:
+- name: action
+  displayName: Run Terraform Operations
+  type: string
+  default: plan
+  values:
+  - plan
+  - destroy
+  - apply
+
+variables:
+  environment: dev
+  serviceConnectionName: TRAVIS_CONNECTION
+
+stages:
+- template: templates/stages/state.setup.yml
+  parameters:
+    action: ${{ parameters.action }}
+    environment: ${{ variables.environment }}
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
+
+- template: templates/stages/aviatrix.controller.yml
+  parameters:
+    action: ${{ parameters.action }}
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
+    environment: ${{ variables.environment }}
+
+- template: templates/stages/transits.yml
+  parameters:
+    action: ${{ parameters.action }}
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
+    environment: ${{ variables.environment }}
+    transits:
+    - csp: azure
+      region: east-us-1
+    - csp: azure
+      region: south-central-us
+
+- template: templates/stages/spokes.yml
+  parameters:
+    action: ${{ parameters.action }}
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
+    environment: ${{ variables.environment }}
+    spokes:
+    - csp: azure
+      region: east-us-1
+      spokes:
+      - spoke1
+      - spoke2
+    - csp: azure
+      region: south-central-us
+      spokes:
+      - spoke1

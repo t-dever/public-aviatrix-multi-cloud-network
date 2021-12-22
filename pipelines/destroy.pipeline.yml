@@ -1,0 +1,44 @@
+trigger: none
+pool: ubuntu20-latest
+
+parameters:
+- name: environment
+  type: string
+  default: dev
+- name: csp
+  type: string
+  values:
+    - azure
+
+variables:
+- group: ${{ parameters.environment }}-state
+- group: ${{ parameters.environment }}-controller
+- name: serviceConnectionName
+  value: TRAVIS_CONNECTION
+
+steps:
+- template: templates/common.yml
+  parameters:
+    serviceConnectionName: ${{ variables.serviceConnectionName }}
+
+- task: AzureKeyVault@2
+  inputs:
+    connectedServiceName: ${{ variables.serviceConnectionName }}
+    keyVaultName: $(keyVaultName)
+    secretsFilter: 'controller-public-ip,controller-admin-pw'
+  displayName: Get Controller Secrets
+
+- script: |
+    cd $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ parameters.csp }}
+    terragrunt run-all destroy --terragrunt-non-interactive
+  displayName: Destroy ${{ parameters.environment }}
+  env:
+    REMOTE_STATE_RESOURCE_GROUP: $(stateResourceGroupName)
+    REMOTE_STATE_STORAGE_ACCOUNT: $(stateStorageAccountName)
+    AVIATRIX_CONTROLLER_IP: $(controller-public-ip)
+    AVIATRIX_USERNAME: $(aviatrixControllerUsername)
+    AVIATRIX_PASSWORD: $(controller-admin-pw)
+    ARM_CLIENT_ID: $(SERVICE_PRINCIPAL_ID)
+    ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+    ARM_TENANT_ID: $(TENANT_ID)
+    ARM_CLIENT_SECRET: $(SERVICE_PRINCIPAL_KEY)

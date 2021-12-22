@@ -3,6 +3,16 @@ parameters:
   type: string
 
 steps:
+
+- ${{ if eq(variables['Build.Reason'], 'PullRequest' ) }}:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+  - script: |
+      docker run -v $(pwd):/lint -w /lint ghcr.io/antonbabenko/pre-commit-terraform:latest run -a
+    displayName: Perform Pre-Commit Checks
+
 - task: AzureCLI@2
   displayName: Get Service Connection Information
   inputs:
@@ -24,4 +34,6 @@ steps:
     curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
     sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
     sudo apt-get update && sudo apt-get install terraform
+    sudo curl -L -o /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64
+    sudo chmod +x /usr/local/bin/terragrunt
   displayName: Installing Terraform
