@@ -21,7 +21,7 @@ stages:
       - job: ${{ replace(transit.region, '-', '_') }}TransitDeploymentJob
         displayName: ${{ transit.csp }} hub ${{ transit.region }}
         variables:
-          terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/${{ transit.csp }}/${{ transit.region }}/hub
+          terraform_path: $(System.DefaultWorkingDirectory)/terragrunt/${{ parameters.environment }}/${{ transit.csp }}/${{ transit.region }}/hub
           plan_file: hub
           ${{ if eq(parameters.action, 'destroy') }}:
             displayName: "Destroying Transits"
