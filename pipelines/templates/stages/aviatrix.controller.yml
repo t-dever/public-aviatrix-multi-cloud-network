@@ -17,7 +17,7 @@ stages:
     - job: ControllerDeploymentJob
       displayName: Aviatrix Controller Deployment
       variables:
-        terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/management/controller
+        terraform_path: $(System.DefaultWorkingDirectory)/terragrunt/${{ parameters.environment }}/management/controller
         plan_file: controller
         ${{ if eq(parameters.action, 'destroy') }}:
           displayName: "Destroying Controller"
