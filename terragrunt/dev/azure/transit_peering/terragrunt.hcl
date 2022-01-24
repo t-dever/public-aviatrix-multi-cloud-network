@@ -3,15 +3,22 @@ include "root" {
 }
 
 include "common" {
-  path = "${dirname(find_in_parent_folders())}/_common/peerings/transit_peering.hcl"
+  path = "${dirname(find_in_parent_folders())}/_common/aviatrix/transit_peering.hcl"
 }
 
 dependency "ussc_transit" {
-  config_path = "../azure/south-central-us/hub"
+  config_path = "../south-central-us/transit"
 }
 
 dependency "use1_transit" {
-  config_path = "../azure/east-us-1/hub"
+  config_path = "../east-us-1/transit"
+}
+
+dependencies {
+  paths = [
+    "../south-central-us/transit",
+    "../east-us-1/transit"
+  ]
 }
 
 inputs = {

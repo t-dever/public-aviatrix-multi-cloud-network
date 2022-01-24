@@ -35,9 +35,13 @@ stages:
     environment: ${{ variables.environment }}
     transits:
     - csp: azure
+      region: .terraform
+    - csp: azure
       region: east-us-1
     - csp: azure
       region: south-central-us
+    - csp: azure
+      region: transit_peering
 
 - template: templates/stages/spokes.yml
   parameters:
