@@ -1,5 +1,5 @@
 trigger: none
-pool: ubuntu20-latest
+pool: ubuntu-latest
 
 parameters:
 - name: action
