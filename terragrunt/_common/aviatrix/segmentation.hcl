@@ -9,7 +9,7 @@ locals {
 }
 
 dependency "controller" {
-  config_path = "../management/controller"
+  config_path = "../../management/controller"
 }
 
 inputs = {
