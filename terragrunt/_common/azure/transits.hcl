@@ -26,6 +26,10 @@ dependency "state" {
   config_path = "../../../management/state"
 }
 
+# dependencies {
+#   paths = ["../../../transit_peering"]
+# }
+
 inputs = {
   location                                  = local.azure_region_code
   resource_group_name                       = local.resource_group_name
