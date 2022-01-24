@@ -21,8 +21,11 @@ def object_to_yaml_str(obj, options=None):
 
 def get_regions(terraform_path, csp):
     file_path = f"{terraform_path}/{csp}"
-    if isdir(file_path) and "." not in file_path:
+    if isdir(file_path):
         regions = os.listdir(file_path)
+        for region in regions:
+            if "." in region:
+                regions.remove(region)
         return regions
     else:
         return None
