@@ -18,17 +18,17 @@ locals {
   firewall_name        = "${local.resource_prefix}-fw"
 }
 
-dependency "controller" {
-  config_path = "../../../../management/controller"
+dependency "controller_deployment" {
+  config_path = "../../../../management/controller/deployment"
+}
+
+dependency "controller_config" {
+  config_path = "../../../../management/controller/config"
 }
 
 dependency "state" {
   config_path = "../../../../management/state"
 }
-
-# dependencies {
-#   paths = ["../../../transit_peering"]
-# }
 
 inputs = {
   location                                  = local.azure_region_code
@@ -44,9 +44,10 @@ inputs = {
   firewall_image                            = "Fortinet FortiGate (PAYG_20190624) Next-Generation Firewall Latest Release"
   firewall_image_version                    = "7.0.3"
   firewall_ha                               = true
-  controller_public_ip                      = dependency.controller.outputs.controller_public_ip
-  controller_admin_password                 = dependency.controller.outputs.controller_admin_password
   key_vault_id                              = dependency.state.outputs.key_vault_id
-  aviatrix_azure_account                    = dependency.controller.outputs.aviatrix_azure_account
-  user_public_for_mgmt                      = dependency.controller.outputs.user_public_ip_address
+  aviatrix_azure_account                    = dependency.controller_config.outputs.aviatrix_azure_account
+  user_public_for_mgmt                      = dependency.controller_config.outputs.user_public_ip_address
+  controller_public_ip                      = dependency.controller_deployment.outputs.controller_public_ip
+  controller_username                       = "admin"
+  controller_password                       = dependency.controller_deployment.outputs.controller_admin_password
 }

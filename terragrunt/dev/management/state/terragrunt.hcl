@@ -3,7 +3,7 @@ include "root" {
 }
 
 terraform {
-  source = "${local.base_source_url}?ref=v1.1.1"
+  source = "${local.base_source_url}?ref=features/AllowFirewallInHub"
 }
 
 locals {

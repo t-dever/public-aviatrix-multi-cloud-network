@@ -27,8 +27,12 @@ dependency "state" {
   config_path = "../../../../../management/state"
 }
 
-dependency "controller" {
-  config_path = "../../../../../management/controller"
+dependency "controller_deployment" {
+  config_path = "../../../../../management/controller/deployment"
+}
+
+dependency "controller_config" {
+  config_path = "../../../../../management/controller/config"
 }
 
 dependency "transit" {
@@ -48,12 +52,15 @@ inputs = {
   test_vm_name                            = local.test_vm_name
   spoke_gw_size                           = "Standard_B1ms"
   firenet_inspection                      = false
-  controller_public_ip                    = dependency.controller.outputs.controller_public_ip
-  controller_password                     = dependency.controller.outputs.controller_admin_password
-  aviatrix_azure_account                  = dependency.controller.outputs.aviatrix_azure_account
+  controller_public_ip                    = dependency.controller_deployment.outputs.controller_public_ip
+  controller_password                     = dependency.controller_deployment.outputs.controller_admin_password
+  aviatrix_azure_account                  = dependency.controller_config.outputs.aviatrix_azure_account
   key_vault_id                            = dependency.state.outputs.key_vault_id
   transit_gateway_name                    = dependency.transit.outputs.transit_gateway_name
   firenet_inspection                      = dependency.transit.outputs.firenet_enabled
   segmentation_domain_name                = local.local_segmentation_domain
   segmentation_domain_connection_policies = ["${dependency.segmentation.outputs.segmentation_domain_name}"]
+  controller_public_ip                    = dependency.controller_deployment.outputs.controller_public_ip
+  controller_username                     = "admin"
+  controller_password                     = dependency.controller_deployment.outputs.controller_admin_password
 }
