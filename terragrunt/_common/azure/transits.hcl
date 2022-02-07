@@ -1,5 +1,5 @@
 terraform {
-  source = "${local.base_source_url}?ref=features/AllowFirewallInHub"
+  source = "${local.base_source_url}?ref=v2.0.4"
 }
 
 locals {
@@ -18,17 +18,17 @@ locals {
   firewall_name        = "${local.resource_prefix}-fw"
 }
 
-dependency "controller" {
-  config_path = "../../../../management/controller"
+dependency "controller_deployment" {
+  config_path = "../../../../management/controller/deployment"
+}
+
+dependency "controller_config" {
+  config_path = "../../../../management/controller/config"
 }
 
 dependency "state" {
   config_path = "../../../../management/state"
 }
-
-# dependencies {
-#   paths = ["../../../transit_peering"]
-# }
 
 inputs = {
   location                                  = local.azure_region_code
@@ -36,6 +36,9 @@ inputs = {
   vnet_name                                 = local.vnet_name
   transit_gateway_name                      = local.transit_gateway_name
   transit_gateway_ha                        = true
+  transit_gw_size                           = "Standard_B2ms"
+  transit_gateway_az_zone                   = "az-1"
+  transit_gateway_ha_az_zone                = "az-2"
   enable_transit_gateway_scheduled_shutdown = true
   insane_mode                               = false
   firenet_enabled                           = true
@@ -44,9 +47,10 @@ inputs = {
   firewall_image                            = "Fortinet FortiGate (PAYG_20190624) Next-Generation Firewall Latest Release"
   firewall_image_version                    = "7.0.3"
   firewall_ha                               = true
-  controller_public_ip                      = dependency.controller.outputs.controller_public_ip
-  controller_admin_password                 = dependency.controller.outputs.controller_admin_password
   key_vault_id                              = dependency.state.outputs.key_vault_id
-  aviatrix_azure_account                    = dependency.controller.outputs.aviatrix_azure_account
-  user_public_for_mgmt                      = dependency.controller.outputs.user_public_ip_address
+  aviatrix_azure_account                    = dependency.controller_config.outputs.aviatrix_azure_account
+  controller_public_ip                      = dependency.controller_deployment.outputs.controller_public_ip
+  controller_username                       = dependency.controller_deployment.outputs.controller_admin_username
+  controller_password                       = dependency.controller_deployment.outputs.controller_admin_password
+  allowed_public_ips                        = ["209.169.92.39"]
 }

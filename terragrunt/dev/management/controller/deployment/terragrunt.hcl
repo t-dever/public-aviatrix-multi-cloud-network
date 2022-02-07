@@ -3,7 +3,7 @@ include "root" {
 }
 
 terraform {
-  source = "${local.base_source_url}?ref=addFortinetToHubModule"
+  source = "${local.base_source_url}?ref=v2.0.4"
 }
 
 locals {
@@ -23,6 +23,7 @@ inputs = {
   aviatrix_controller_name         = "travis-management-controller"
   controller_vm_size               = "Standard_A4_v2"
   controller_version               = "UserConnect-6.5.2898"
+  controller_customer_id           = get_env("CONTROLLER_CUSTOMER_ID")
   admin_email                      = get_env("ADMIN_EMAIL")
   deploy_copilot                   = true
   copilot_name                     = "travis-management-copilot"
@@ -31,11 +32,5 @@ inputs = {
   enable_spot_instances            = true
   store_credentials_in_key_vault   = true
   key_vault_id                     = dependency.state.outputs.key_vault_id
-
-  #   controller_user_public_ip_address  = get_env("USER_PUBLIC_IP_ADDRESS")
-  #   build_agent_ip_address             = get_env("BUILD_AGENT_PUBLIC_IP_ADDRESS")
-  #   controller_customer_id             = get_env("CONTROLLER_CUSTOMER_ID")
-  #   azure_application_key              = get_env("ARM_CLIENT_SECRET")
-  #   aviatrix_azure_access_account_name = get_env("AZURE_ACCESS_ACCOUNT")
-  #   controller_username                = get_env("AVIATRIX_CONTROLLER_USERNAME")
+  ssh_public_key                   = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3e8QwCWEfjbI0VeuqzAfB2YQYlA4uZK70MfUG2kd1AadMs0jJMIurvzpKMgC3hSvIb9s0hGsGLPv7REO+TCtNXS+vhaHkQxVFGnIHTW60IiuFACeDKpJpJXV9VTOATSA5eTHb0rW5nX/x1wCc/JVTeDKaJC/4Qa3sETdinCjX3qmd88AdzXNVJ9p+aPAx1PvJ6qFjyxOdG/GSSQKyhGLzfY2O2c3cWL/eYqkA5Fj6x4PCQMQehmdSJyopCmhISx+GI7lNyf8ovUhekJhBZ+a7wEQcZWOCcdNxkOJN5+ucrgz+m08oq5JWSYyCFtkRrMMVRHIJO3gpXVQ9iWrzVEZiEZS4JyHoGBK8Y1DF4ubIQzhDXdSI8yXTXzGLJcrDsWTscRStR/E/mqhJLT2Dj/1/zs7p6Q0pVR1FNQanL2jgWGjL6ZueSsQYH2j8XF7RzWbjLcH/Bs/xob0zKrJ6m3TSyfMDB2C5ZSHtdVtTWxKDSdifqSws9s8j/2ngaO6KQThH6o0D6H4QXeIHmX6vnn2uUNl0aiPTwrqawT2mt7vlelVMd4MPhitzmQCt5vZ4Mg8AbW4GVjM5x5ToIyxnT10jZJSeERefIrD5AV/c4Sd/MPibw7/6zXYKeARnsOpImdRKMii3jxBYV3E4XyMdXvgXnNqHbMyX74sRMSy0pgKMjw== travis dever@TravisDever-Laptop"
 }

@@ -1,6 +1,6 @@
 # This specifies the default tag/reference for the spoke module
 terraform {
-  source = "${local.base_source_url}?ref=features/AllowFirewallInHub"
+  source = "${local.base_source_url}?ref=v2.0.4"
 }
 
 # These are the spoke level variables

@@ -8,4 +8,5 @@ include "common" {
 
 inputs = {
   vnet_address_prefix = "10.0.0.0/23"
+  firenet_enabled     = false
 }
