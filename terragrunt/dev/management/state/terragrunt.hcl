@@ -23,5 +23,5 @@ inputs = {
   azure_application_id     = get_env("ARM_CLIENT_ID")
   azure_application_key    = get_env("ARM_CLIENT_SECRET")
   allowed_public_ips       = local.allowed_public_ips
-  generate_private_ssh_key = true
+  generate_private_ssh_key = false
 }
