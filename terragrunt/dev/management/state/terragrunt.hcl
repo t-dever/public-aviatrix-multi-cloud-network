@@ -8,10 +8,10 @@ terraform {
 
 locals {
   base_source_url    = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/initial_setup"
-  global_vars        = read_terragrunt_config("${dirname(find_in_parent_folders())}/_common/global_vars.hcl")
-  source_version     = local.global_vars.locals.source_version
-  network_vars       = read_terragrunt_config("${dirname(find_in_parent_folders())}/_common/networks.hcl")
-  allowed_public_ips = local.network_vars.locals["allowed_public_ips"]
+  global_vars        = yamldecode(file("${dirname(find_in_parent_folders())}/_common/global_vars.yaml"))
+  source_version     = local.global_vars.source_code_version
+  network_vars       = yamldecode(file("${dirname(find_in_parent_folders())}/_common/networks.yaml"))
+  allowed_public_ips = local.network_vars.allowed_public_ips
 }
 
 inputs = {
