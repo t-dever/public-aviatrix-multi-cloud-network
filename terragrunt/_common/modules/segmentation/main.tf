@@ -13,7 +13,8 @@ provider "aviatrix" {
   password      = var.controller_password
 }
 
-
-resource "aviatrix_segmentation_security_domain" "segmentation_security_domain" {
-  domain_name = var.segmentation_domain_name
+resource "aviatrix_segmentation_security_domain_connection_policy" "segmentation_security_domain_connection_policy" {
+  for_each      = { for idx, domain in var.segmentation_domain_connection_policies: idx => domain }
+  domain_name_1 = each.value.domain1
+  domain_name_2 = each.value.domain2
 }

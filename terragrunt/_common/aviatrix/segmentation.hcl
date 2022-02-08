@@ -15,6 +15,6 @@ dependency "controller_deployment" {
 inputs = {
   segmentation_domain_name = local.env
   controller_public_ip     = dependency.controller_deployment.outputs.controller_public_ip
-  controller_username      = "admin"
+  controller_username      = dependency.controller_deployment.outputs.controller_admin_username
   controller_password      = dependency.controller_deployment.outputs.controller_admin_password
 }
