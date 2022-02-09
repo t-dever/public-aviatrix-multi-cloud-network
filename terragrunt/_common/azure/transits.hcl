@@ -4,8 +4,7 @@ terraform {
 
 locals {
   base_source_url       = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/transit"
-  # source_version        = local.global_vars.source_code_version
-  source_version = "hotfix/changingTransitIpAddressing"
+  source_version        = local.global_vars.source_code_version
   path_split            = split("/", get_terragrunt_dir())                                                                         # path_split: Separates directory into an array/
   environment           = element(local.path_split, length(local.path_split) - 5)
   region                = element(local.path_split, length(local.path_split) - 2)                                                  # region: This will take the region path to get the directory name for the region.
@@ -56,7 +55,7 @@ inputs = {
   firewall_image                            = "Fortinet FortiGate (PAYG_20190624) Next-Generation Firewall Latest Release"
   firewall_image_version                    = "7.0.3"
   firewall_ha                               = true
-  fw_instance_size                           = "Standard_D3_v2"
+  fw_instance_size                          = "Standard_D3_v2"
   key_vault_id                              = dependency.state.outputs.key_vault_id
   aviatrix_azure_account                    = dependency.controller_config.outputs.aviatrix_azure_account
   allowed_public_ips                        = local.allowed_public_ips

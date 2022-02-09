@@ -16,11 +16,6 @@ variable "controller_public_ip" {
   sensitive   = true
 }
 
-variable "segmentation_domain_name" {
-  type = string
-  description = "The name of the segmentation domain to be created."
-}
-
 variable "segmentation_domain_connection_policies" {
   description = "The segementation domain connection policies to associate to the spoke."
   type        = list(object({
