@@ -11,16 +11,7 @@ repos:
 
 
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: "v1.59.0"
+    rev: "v1.62.3"
     hooks:
       - id: terragrunt_fmt # Ensures terraform formatting is correct
         always_run: true
-
-  # Need to look into this
-  # - repo: https://github.com/cytopia/docker-terragrunt-fmt.git
-  #   rev: "0.4"
-  #   hooks:
-  #     - id: terragrunt-fmt
-  #       name: terragrunt-fmt
-  #       entry: make lint
-  #       language: docker

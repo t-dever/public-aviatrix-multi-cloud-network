@@ -17,7 +17,7 @@ stages:
     - job: StateDeploymentJob
       displayName: Initial Deployment
       variables:
-        terraform_path: $(System.DefaultWorkingDirectory)/terraform/${{ parameters.environment }}/management/state
+        terraform_path: $(System.DefaultWorkingDirectory)/terragrunt/${{ parameters.environment }}/management/state
         plan_file: state_setup
         ${{ if eq(parameters.action, 'destroy') }}:
           displayName: "Destroying State"

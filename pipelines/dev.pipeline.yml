@@ -1,5 +1,6 @@
 trigger: none
-pool: ubuntu20-latest
+pool:
+  vmImage: ubuntu-latest
 
 parameters:
 - name: action

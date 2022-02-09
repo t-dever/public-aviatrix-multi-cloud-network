@@ -23,6 +23,9 @@ def get_regions(terraform_path, csp):
     file_path = f"{terraform_path}/{csp}"
     if isdir(file_path):
         regions = os.listdir(file_path)
+        for region in regions:
+            if "." in region:
+                regions.remove(region)
         return regions
     else:
         return None
@@ -71,7 +74,7 @@ def update_pipeline(pipeline_file, env, terraform_path, azure_regions=None, aws_
 
 for env in environments:
     pipeline = f"{root_path}/pipelines/{env}.pipeline.yml"
-    terraform_path = f"{root_path}/terragrunt/{env}"
+    terraform_path = f"{root_path}/terragrunt/{env}/network"
     azure_regions = get_regions(terraform_path, 'azure')
     if isfile(pipeline):
         update_pipeline(pipeline, env, terraform_path, azure_regions=azure_regions)

@@ -1,0 +1,12 @@
+source_code_version: "tags/v2.0.5"
+environments:
+  dev:
+    env_code: dev
+azure:
+  regions:
+    south-central-us:
+      location: "South Central US"
+      region_code: "ussc"
+    east-us-1:
+      location: "East US"
+      region_code: use1

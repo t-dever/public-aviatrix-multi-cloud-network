@@ -13,8 +13,8 @@ provider "aviatrix" {
   password      = var.controller_password
 }
 
-resource "aviatrix_transit_gateway_peering" "transit_gateway_peering" {
-  for_each               = {for i, v in var.transit_gateway_peerings:  i => v}
-  transit_gateway_name1  = each.value.transit_gateway_1
-  transit_gateway_name2  = each.value.transit_gateway_2
+resource "aviatrix_segmentation_security_domain_connection_policy" "segmentation_security_domain_connection_policy" {
+  for_each      = { for idx, domain in var.segmentation_domain_connection_policies: idx => domain }
+  domain_name_1 = each.value.domain1
+  domain_name_2 = each.value.domain2
 }
