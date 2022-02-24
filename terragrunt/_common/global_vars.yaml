@@ -1,12 +1,43 @@
 source_code_version: "tags/v2.0.5"
-environments:
+environment_vars:
   dev:
     env_code: dev
-azure:
-  regions:
-    south-central-us:
-      location: "South Central US"
-      region_code: "ussc"
-    east-us-1:
-      location: "East US"
-      region_code: use1
+
+cloud_vars:
+  azure:
+    regions:
+      south_central_us:
+        location: "South Central US"
+        region_code: "ussc"
+      east_us_1:
+        location: "East US"
+        region_code: use1
+
+network_vars:
+  allowed_public_ips:
+    - "209.169.80.202"
+  dev:
+    azure:
+      south_central_us:
+        private_address_space: "10.0.0.0/16"
+        public_address_space: "172.32.0.0/16"
+        transits:
+          transit:
+            private_network: "10.0.0.0/23"
+        spokes:
+          spoke1:
+            private_network: "10.0.2.0/23"
+            public_network: "172.32.1.0/24"
+      east_us_1:
+        private_address_space: "10.1.0.0/16"
+        public_address_space: "172.33.0.0/16"
+        transits:
+          transit:
+            private_network: "10.1.0.0/23"
+        spokes:
+          spoke1:
+            private_network: "10.1.2.0/23"
+            public_network: "172.33.1.0/24"
+          spoke2:
+            private_network: "10.1.4.0/23"
+            public_network: "172.33.2.0/24"

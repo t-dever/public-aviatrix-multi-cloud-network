@@ -5,7 +5,3 @@ include "root" {
 include "common" {
   path = "${dirname(find_in_parent_folders())}/_common/azure/spokes.hcl"
 }
-
-inputs = {
-  insane_mode = false
-}

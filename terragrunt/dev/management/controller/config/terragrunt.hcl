@@ -10,7 +10,7 @@ locals {
   base_source_url    = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/aviatrix_controller/configuration"
   global_vars        = yamldecode(file("${dirname(find_in_parent_folders())}/_common/global_vars.yaml"))
   source_version     = local.global_vars.source_code_version
-  network_vars       = yamldecode(file("${dirname(find_in_parent_folders())}/_common/networks.yaml"))
+  network_vars       = local.global_vars.network_vars
   allowed_public_ips = local.network_vars.allowed_public_ips
 }
 

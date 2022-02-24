@@ -1,24 +1,28 @@
 terraform {
-  source = "${local.base_source_url}?ref=${local.source_version}"
+  source = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/transit?ref=${local.source_version}"
 }
 
 locals {
-  base_source_url       = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/transit"
-  source_version        = local.global_vars.source_code_version
-  path_split            = split("/", get_terragrunt_dir())                                                                         # path_split: Separates directory into an array/
-  environment           = element(local.path_split, length(local.path_split) - 5)
-  region                = element(local.path_split, length(local.path_split) - 2)                                                  # region: This will take the region path to get the directory name for the region.
-  transit_name          = element(local.path_split, length(local.path_split) - 1)
   global_vars           = yamldecode(file("${dirname(find_in_parent_folders())}/_common/global_vars.yaml"))
-  region_vars           = local.global_vars.azure.regions["${local.region}"]
+  source_version        = local.global_vars.source_code_version
+
+  path_split                 = split("/", get_terragrunt_dir())                                                                         # path_split: Separates directory into an array/
+  environment_folder_name    = element(local.path_split, length(local.path_split) - 5)
+  cloud_provider_folder_name = element(local.path_split, length(local.path_split) - 3)
+  region_folder_name         = element(local.path_split, length(local.path_split) - 2)                                                  # region: This will take the region path to get the directory name for the region.
+  transit_folder_name        = element(local.path_split, length(local.path_split) - 1)
+
+  region_vars         = local.global_vars.cloud_vars["${local.cloud_provider_folder_name}"].regions["${local.region_folder_name}"]                    # This will get the region variables.
+  network_vars        = local.global_vars.network_vars["${local.environment_folder_name}"]["${local.cloud_provider_folder_name}"]["${local.region_folder_name}"].transits["${local.transit_folder_name}"] # This will get the network variables.
+  environment_vars    = local.global_vars.environment_vars["${local.environment_folder_name}"]                                            # This will get the network variables.
+  allowed_public_ips  = local.global_vars.network_vars.allowed_public_ips
+
   region_code           = local.region_vars.region_code
   azure_region_location = local.region_vars.location
 
-  network_vars          = yamldecode(file("${dirname(find_in_parent_folders())}/_common/networks.yaml"))
-  allowed_public_ips    = local.network_vars.allowed_public_ips
-  vnet_address_prefix   = local.network_vars["${local.environment}"]["azure"]["${local.region}"]["transit"]
+  vnet_address_prefix   = local.network_vars.private_network
 
-  resource_prefix       = "travis-${local.region_code}-${local.transit_name}"
+  resource_prefix       = "travis-${local.region_code}-${local.transit_folder_name}"
   resource_group_name   = "${local.resource_prefix}-rg"
   vnet_name             = "${local.resource_prefix}-vnet"
   transit_gateway_name  = "${local.resource_prefix}-gw"
@@ -48,7 +52,7 @@ inputs = {
   transit_gateway_az_zone                   = "az-1"
   transit_gateway_ha_az_zone                = "az-2"
   enable_transit_gateway_scheduled_shutdown = true
-  insane_mode                               = true
+  insane_mode                               = false
   firenet_enabled                           = false
   firewall_name                             = local.firewall_name
   egress_enabled                            = true

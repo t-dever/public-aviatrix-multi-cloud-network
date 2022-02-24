@@ -8,22 +8,22 @@ include "common" {
 
 
 dependency "ussc_spoke1" {
-  config_path = "../azure/south-central-us/spokes/spoke1"
+  config_path = "../azure/south_central_us/spokes/spoke1"
 }
 
 dependency "use1_spoke1" {
-  config_path = "../azure/east-us-1/spokes/spoke1"
+  config_path = "../azure/east_us_1/spokes/spoke1"
 }
 
 dependency "use1_spoke2" {
-  config_path = "../azure/east-us-1/spokes/spoke2"
+  config_path = "../azure/east_us_1/spokes/spoke2"
 }
 
 dependencies {
   paths = [
-    "../azure/south-central-us/spokes/spoke1",
-    "../azure/east-us-1/spokes/spoke1",
-    "../azure/east-us-1/spokes/spoke2",
+    "../azure/south_central_us/spokes/spoke1",
+    "../azure/east_us_1/spokes/spoke1",
+    "../azure/east_us_1/spokes/spoke2",
   ]
 }
 

@@ -7,17 +7,17 @@ include "common" {
 }
 
 dependency "ussc_transit" {
-  config_path = "../azure/south-central-us/transit"
+  config_path = "../azure/south_central_us/transit"
 }
 
 dependency "use1_transit" {
-  config_path = "../azure/east-us-1/transit"
+  config_path = "../azure/east_us_1/transit"
 }
 
 dependencies {
   paths = [
-    "../azure/south-central-us/transit",
-    "../azure/east-us-1/transit"
+    "../azure/south_central_us/transit",
+    "../azure/east_us_1/transit"
   ]
 }
 

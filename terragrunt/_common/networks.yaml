@@ -1,6 +1,5 @@
 allowed_public_ips:
-  - "209.169.92.39"
-  - "97.77.168.162"
+  - "209.169.80.202"
 dev:
   azure:
     south-central-us:
