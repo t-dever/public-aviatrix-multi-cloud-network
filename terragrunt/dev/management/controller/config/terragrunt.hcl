@@ -3,7 +3,8 @@ include "root" {
 }
 
 terraform {
-  source = "${local.base_source_url}?ref=${local.source_version}"
+  # source = "${local.base_source_url}?ref=${local.source_version}"
+  source = "${local.base_source_url}?ref=hotfix/AllowAviatrixCredsthruvars"
 }
 
 locals {
@@ -27,6 +28,7 @@ inputs = {
   client_secret                    = get_env("ARM_CLIENT_SECRET")
   controller_public_ip             = dependency.deployment.outputs.controller_public_ip
   controller_private_ip            = dependency.deployment.outputs.controller_private_ip
+  controller_nic_id                = dependency.deployment.outputs.controller_nic_id
   controller_username              = dependency.deployment.outputs.controller_admin_username
   controller_password              = dependency.deployment.outputs.controller_admin_password
   copilot_public_ip                = dependency.deployment.outputs.copilot_public_ip
