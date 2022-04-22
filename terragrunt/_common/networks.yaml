@@ -1,6 +1,5 @@
 allowed_public_ips:
-  - "209.169.92.39"
-  - "97.77.168.162"
+  - "209.169.80.202/32"
 dev:
   azure:
     south-central-us:
@@ -12,3 +11,9 @@ dev:
       spokes:
         spoke1: "10.1.2.0/23"
         spoke2: "10.1.4.0/23"
+
+aws_gov_example:
+  aws:
+    controller: "10.0.0.0/24"
+    us-gov-west-1:
+      transit: "10.0.2.0/23"

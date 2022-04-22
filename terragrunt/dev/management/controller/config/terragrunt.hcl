@@ -7,11 +7,9 @@ terraform {
 }
 
 locals {
-  base_source_url    = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/azure/aviatrix_controller/configuration"
+  base_source_url    = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_config"
   global_vars        = yamldecode(file("${dirname(find_in_parent_folders())}/_common/global_vars.yaml"))
   source_version     = local.global_vars.source_code_version
-  network_vars       = yamldecode(file("${dirname(find_in_parent_folders())}/_common/networks.yaml"))
-  allowed_public_ips = local.network_vars.allowed_public_ips
 }
 
 dependency "state" {
@@ -23,22 +21,19 @@ dependency "deployment" {
 }
 
 inputs = {
-  azure_account_name               = "travis-azure-account"
-  client_secret                    = get_env("ARM_CLIENT_SECRET")
   controller_public_ip             = dependency.deployment.outputs.controller_public_ip
-  controller_private_ip            = dependency.deployment.outputs.controller_private_ip
   controller_username              = dependency.deployment.outputs.controller_admin_username
   controller_password              = dependency.deployment.outputs.controller_admin_password
-  copilot_public_ip                = dependency.deployment.outputs.copilot_public_ip
-  copilot_private_ip               = dependency.deployment.outputs.copilot_private_ip
-  resource_group_name              = dependency.deployment.outputs.resource_group_name
-  allowed_public_ips               = local.allowed_public_ips
-  controller_subnet_id             = dependency.deployment.outputs.controller_subnet_id
+  aviatrix_access_account_name     = dependency.deployment.outputs.aviatrix_primary_access_account
+  copilot_ip_address               = dependency.deployment.outputs.copilot_public_ip
   enable_security_group_management = true
   enable_rsyslog_to_copilot        = true
   enable_netflow_to_copilot        = true
   enable_backup                    = true
-  backup_storage_name              = dependency.state.outputs.storage_account_backup_name
-  backup_container_name            = dependency.state.outputs.storage_account_backup_container_name
-  backup_region                    = "South Central US"
+  enable_azure_backup              = {
+                                        backup_account_name   = dependency.deployment.outputs.aviatrix_primary_access_account,
+                                        backup_storage_name   = dependency.state.outputs.storage_account_backup_name,
+                                        backup_container_name = dependency.state.outputs.storage_account_backup_container_name,
+                                        backup_region         = "South Central US"
+                                     }
 }
