@@ -1,8 +1,9 @@
-source_code_version: "tags/v2.4.2"
+source_code_version: "tags/v2.4.5"
+source_code_base_url: "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules"
 environments:
   dev:
     env_code: dev
-  aws_controller_example:
+  aws_gov_example:
     env_code: dev_aws_gov
     region: "us-gov-west-1"
 azure:

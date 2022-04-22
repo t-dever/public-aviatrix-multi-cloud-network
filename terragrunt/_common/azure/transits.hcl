@@ -29,9 +29,9 @@ dependency "controller_deployment" {
   config_path = "../../../../management/controller/deployment"
 }
 
-dependency "controller_config" {
-  config_path = "../../../../management/controller/config"
-}
+# dependency "controller_config" {
+#   config_path = "../../../../management/controller/config"
+# }
 
 dependency "state" {
   config_path = "../../../../management/state"
@@ -57,7 +57,7 @@ inputs = {
   firewall_ha                               = true
   fw_instance_size                          = "Standard_D3_v2"
   key_vault_id                              = dependency.state.outputs.key_vault_id
-  aviatrix_azure_account                    = dependency.controller_config.outputs.aviatrix_azure_account
+  aviatrix_azure_account                    = dependency.controller_deployment.outputs.aviatrix_primary_access_account
   allowed_public_ips                        = local.allowed_public_ips
   controller_public_ip                      = dependency.controller_deployment.outputs.controller_public_ip
   controller_username                       = dependency.controller_deployment.outputs.controller_admin_username

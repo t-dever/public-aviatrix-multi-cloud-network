@@ -1,15 +1,17 @@
 terraform {
-  source = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aws/transit?ref=hotfix/AllowAviatrixCredsthruvars"
+  # source = "${local.source_base_url}?ref=${local.source_version}"
+  source = "${local.source_base_url}?ref=features/createAwsPaloFirewallModule"
 }
 
 locals {
-  source_version        = local.global_vars.source_code_version
   path_split            = split("/", get_terragrunt_dir())                                                                         # path_split: Separates directory into an array/
   environment           = element(local.path_split, length(local.path_split) - 5)
   region                = element(local.path_split, length(local.path_split) - 2)                                                  # region: This will take the region path to get the directory name for the region.
   transit_name          = element(local.path_split, length(local.path_split) - 1)
   global_vars           = yamldecode(file("${dirname(find_in_parent_folders())}/_common/global_vars.yaml"))
   network_vars          = yamldecode(file("${dirname(find_in_parent_folders())}/_common/networks.yaml"))
+  source_version        = local.global_vars.source_code_version
+  source_base_url       = "${local.global_vars.source_code_base_url}//modules/aws/transit"
   region_vars           = local.global_vars.aws.regions["${local.region}"]
   region_code           = local.region_vars.region_code
   aws_region_location   = local.region_vars.location
@@ -59,17 +61,26 @@ inputs = {
   enable_aviatrix_transit_firenet              = true
   aviatrix_transit_gateway_size                = "c5.xlarge" # insane mode & firenet
   firewall_allowed_ips                         = local.allowed_public_ips
-  firewall_public_key                          = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDaRtS3j6rvVE1HkWNUwTh6JcMBudrSiiEh4jF8tbJunJybDw+afo71OYetIs7/pq1UQW5Ffwi/z/bTvYleF/IV3Tp9NLhqyfee4WzZESfGxqdchDqa0pkDpYEq+Rh11x8VQ4P4BcgYvNOHh0UbMM77ftMWrxPDY7sCnYGAShbz7lPVSEYsuEfj2QUVmrkPYKGC6qytYfZkj1jH3VnetFTFosinJUgyWRvGXyzkSGEHXNttUs7a5SYwiNbyc+O/yi7Xce0Jtuf7nRwo/+E2pIuV3ohitW4PvPUwmiBajLqcwwG0Rw2Qu/cgzHlK4kphkcSBePoyr4u1CtqClPha+ShluzdM0MKskrwGxQlwaX6z5EYgiUc6PBwaA6LAv48lvF49kpYbyJ3tE2TN/wZm+rKp4ZSMOXATJZsMDrygsDD57fF21R1nR+0zx5AtpW9A7iQYsvkWAuDMelRgWPhiS0EvIAMVkwi8MCRXwjS1FMj2E+SJoZGg1dqNoVNdf7dx5EM= aws_firewalls"
-  firewall_aws_key_pair_name                   = "travis-aviatrix-firenet-key"
-  firewall_private_key_location                = "C:/Users/Travis Dever/.ssh/aws_firewalls"
-  firewall_image                               = "Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1"
-  firewall_image_version                       = "10.1.4"
-  firewalls = []
-  s3_bucket_name   = local.s3_bucket_name
-  s3_iam_role_name = local.s3_iam_role_name
+  deploy_palo_alto_firewalls = {
+    s3_bucket_name = local.s3_bucket_name,
+    s3_iam_role_name = local.s3_iam_role_name,
+    aws_key_pair_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDaRtS3j6rvVE1HkWNUwTh6JcMBudrSiiEh4jF8tbJunJybDw+afo71OYetIs7/pq1UQW5Ffwi/z/bTvYleF/IV3Tp9NLhqyfee4WzZESfGxqdchDqa0pkDpYEq+Rh11x8VQ4P4BcgYvNOHh0UbMM77ftMWrxPDY7sCnYGAShbz7lPVSEYsuEfj2QUVmrkPYKGC6qytYfZkj1jH3VnetFTFosinJUgyWRvGXyzkSGEHXNttUs7a5SYwiNbyc+O/yi7Xce0Jtuf7nRwo/+E2pIuV3ohitW4PvPUwmiBajLqcwwG0Rw2Qu/cgzHlK4kphkcSBePoyr4u1CtqClPha+ShluzdM0MKskrwGxQlwaX6z5EYgiUc6PBwaA6LAv48lvF49kpYbyJ3tE2TN/wZm+rKp4ZSMOXATJZsMDrygsDD57fF21R1nR+0zx5AtpW9A7iQYsvkWAuDMelRgWPhiS0EvIAMVkwi8MCRXwjS1FMj2E+SJoZGg1dqNoVNdf7dx5EM= aws_firewalls",
+    aws_firewall_key_pair_name = "travis-aviatrix-firenet-key",
+    firewall_private_key_location = "${get_env("AWS_FIREWALL_PRIVATE_KEY_LOCATION")}",
+    firewall_password = "",
+    store_firewall_password_in_ssm = true,
+    firewalls = [
+      {
+        name = "travis-test-firewall-1"
+      }
+    ]
+    firewall_image = "Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1",
+    firewall_image_version = "10.1.4",
+    firewall_size = "m5.xlarge"
+  }
   tag_prefix       = local.resource_prefix
   tags = {
     "CreatedBy" = "Terraform"
-    "ownedBy"   = "tdever@aviatrix.com"
+    "ownedBy"   = "${get_env("ADMIN_EMAIL")}"
   }
 }

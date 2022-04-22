@@ -14,10 +14,10 @@ inputs = {
     {
       name = "travis-palo-1",
       size = "m5.xlarge"
-    },
-    {
-      name = "travis-palo-2",
-      size = "m5.xlarge"
     }
+    # {
+    #   name = "travis-palo-2",
+    #   size = "m5.xlarge"
+    # }
   ]
 }
