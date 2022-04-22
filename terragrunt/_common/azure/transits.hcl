@@ -29,10 +29,6 @@ dependency "controller_deployment" {
   config_path = "../../../../management/controller/deployment"
 }
 
-# dependency "controller_config" {
-#   config_path = "../../../../management/controller/config"
-# }
-
 dependency "state" {
   config_path = "../../../../management/state"
 }

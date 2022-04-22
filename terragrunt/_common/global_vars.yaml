@@ -1,4 +1,4 @@
-source_code_version: "tags/v2.4.5"
+source_code_version: "tags/v2.4.6"
 source_code_base_url: "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules"
 environments:
   dev:
